@@ -225,6 +225,49 @@ button{font-family:inherit}
 .card .close{margin-top:22px;background:var(--bg);color:var(--deep);border:none;border-radius:999px;padding:11px 34px;font-size:16px;font-weight:800;cursor:pointer;transition:background .2s}
 .card .close:hover{background:var(--bg3)}
 
+/* ═══ continue button (lock) ═══ */
+.continueBtn{margin-top:16px;background:#fff;color:var(--deep);border:2px solid var(--bg2);border-radius:999px;padding:11px 26px;font-weight:800;cursor:pointer;font-size:14.5px;font-family:'Tajawal',sans-serif;box-shadow:0 4px 12px rgba(217,79,126,.12);transition:transform .2s,box-shadow .2s;display:none}
+.continueBtn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.continueBtn.show{display:inline-block;animation:stageIn .5s ease both}
+
+/* ═══ TIMELINE ═══ */
+.timeline{width:min(560px,94vw);margin:6px 0 4px;position:relative;padding-right:6px}
+.tl-line{position:absolute;right:26px;top:6px;bottom:6px;width:3px;background:linear-gradient(var(--bg2),var(--accent));border-radius:2px}
+.tl-item{position:relative;padding:0 62px 24px 4px;opacity:0;transform:translateX(22px);transition:opacity .6s ease,transform .6s ease}
+.tl-item.show{opacity:1;transform:none}
+.tl-dot{position:absolute;right:13px;top:2px;width:28px;height:28px;border-radius:50%;background:#fff;border:3px solid var(--accent);display:grid;place-items:center;font-size:15px;box-shadow:0 3px 10px rgba(217,79,126,.2);z-index:2}
+.tl-card{background:var(--card);border:2px solid var(--bg2);border-radius:18px;padding:13px 16px;box-shadow:0 6px 16px rgba(217,79,126,.1);text-align:right}
+.tl-year{font-family:'Marhey','Tajawal',sans-serif;color:var(--accent);font-weight:700;font-size:13px}
+.tl-title{color:var(--deep);font-weight:800;font-size:17px;margin:2px 0 5px}
+.tl-body{color:var(--text);font-size:14.5px;line-height:1.9}
+
+/* ═══ REASONS ═══ */
+.reasonBox{background:var(--card);border:2px solid var(--bg2);border-radius:26px;box-shadow:var(--shadow);max-width:460px;width:92vw;padding:34px 24px;margin-top:16px;min-height:150px;display:grid;place-items:center}
+#reasonText{font-size:20px;line-height:1.85;color:var(--deep);font-weight:700;font-family:'Marhey','Tajawal',sans-serif}
+#reasonText.pulse{animation:cardIn .55s ease}
+.reasonCount{margin-top:14px;color:var(--soft);font-size:14px;font-weight:800;min-height:20px}
+
+/* ═══ OPEN-WHEN ═══ */
+.jar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;width:100%;max-width:600px;margin-top:14px}
+.owLetter{background:var(--card);border:2px dashed var(--accent);border-radius:18px;padding:20px 12px;cursor:pointer;text-align:center;transition:transform .2s,background .3s;position:relative}
+.owLetter:hover{transform:translateY(-4px) rotate(-1deg)}
+.owLetter .owe{font-size:34px;display:block;margin-bottom:6px}
+.owLetter .owt{font-weight:800;color:var(--deep);font-size:14.5px;line-height:1.6}
+.owLetter.opened{background:#FFF0F5;border-style:solid}
+.owLetter.opened::after{content:'✅';position:absolute;top:-9px;left:-6px;font-size:18px;animation:pop .4s ease both}
+
+/* ═══ STARS ═══ */
+#stars{position:relative;background:linear-gradient(180deg,#241633 0%,#3a1f45 55%,#5a2d4d 100%)}
+#starCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+#stars .starContent{position:relative;z-index:2;width:100%;display:flex;flex-direction:column;align-items:center}
+#stars h2{color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.45)}
+#stars>.starContent>p{color:#ffd9e8}
+.wishRow{display:flex;gap:8px;margin-top:16px;width:min(420px,90vw)}
+#wishInput{flex:1;border-radius:999px;border:none;padding:13px 18px;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;outline:none;color:var(--deep);box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.wishRow .btn{padding:13px 18px;font-size:20px}
+.replyBox{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.35);border-radius:22px;padding:18px;margin-top:24px;width:min(460px,92vw);backdrop-filter:blur(4px)}
+#replyInput{width:100%;min-height:92px;border-radius:14px;border:none;padding:12px 14px;font-family:'Tajawal',sans-serif;font-size:16px;resize:vertical;color:var(--deep);outline:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+
 @media(max-width:480px){
   .env-grid{grid-template-columns:repeat(2,1fr)}
   .q-area{height:270px}
@@ -254,6 +297,7 @@ button{font-family:inherit}
   <input id="pass" type="text" placeholder="اكتبي الجواب هون..." autocomplete="off">
   <div id="lockMsg"></div>
   <button class="btn" style="margin-top:14px" onclick="tryPass()">افتحي 🗝️</button>
+  <button class="continueBtn" id="continueBtn"></button>
 </section>
 
 <!-- ═════════ 1 HERO ═════════ -->
@@ -305,7 +349,17 @@ button{font-family:inherit}
   </div>
   <span class="counter"><span id="memPairs">0</span> / 6 أزواج · محاولات: <span id="memTries">0</span></span>
   <div class="memGrid" id="memGrid" style="margin-top:16px"></div>
-  <button class="btn nextHidden" id="toQuestion" onclick="go('question')">هلق السؤال الكبير... 🥁</button>
+  <button class="btn nextHidden" id="toQuestion" onclick="go('timeline');initTimeline()">قبل السؤال الكبير... 🥁</button>
+</section>
+
+<!-- ═════════ 4.5 TIMELINE ═════════ -->
+<section class="stage" id="timeline">
+  <div class="secHead">
+    <h2>قصتنا... من وين لوين 🗓️</h2>
+    <p>خمس سنين بلحظات صغيرة صنعت كل شي 💗</p>
+  </div>
+  <div class="timeline" id="tlWrap"><div class="tl-line"></div></div>
+  <button class="btn nextHidden" id="toQuestion2" onclick="go('question')">طيب... بدي إسألك شي 🥺</button>
 </section>
 
 <!-- ═════════ 5 QUESTION ═════════ -->
@@ -329,7 +383,29 @@ button{font-family:inherit}
     <p>شهر كامل بدون صوتك... كان أطول شهر بحياتي. خمس سنين، من خناقات Rave لأحلى شي صار معي. ما منعرف لا أنا ولا إنتي إيمتى صرنا حبايب بالظبط، بس أنا بعرف شغلة وحدة أكيدة: ما بدي لهالحكاية تخلص أبداً.</p>
     <p class="sign">بحبك يا شلكتي 💗<br>ورح ضل حبك</p>
   </div>
-  <button class="btn" id="surpriseBtn" onclick="go('surprise');burst(120)">استني... في شي كمان 👀🎁</button>
+  <button class="btn" id="surpriseBtn" onclick="go('reasons')">استني... في شي كمان 👀💝</button>
+</section>
+
+<!-- ═════════ 6.5 REASONS ═════════ -->
+<section class="stage" id="reasons">
+  <div class="secHead">
+    <h2>أسباب بحبك 💝</h2>
+    <p>اكبسي عالزر... وكل مرة رح يطلعلك سبب</p>
+  </div>
+  <div class="reasonBox"><span id="reasonText">جاهزة؟ اكبسي تحت 👇</span></div>
+  <div class="reasonCount" id="reasonCount"></div>
+  <button class="btn" style="margin-top:20px" onclick="nextReason()">سبب تاني 💗</button>
+  <button class="btn ghost nextHidden" id="toOpenWhen" style="margin-top:14px" onclick="go('openwhen')">في كمان إلك... ✉️</button>
+</section>
+
+<!-- ═════════ 6.7 OPEN-WHEN ═════════ -->
+<section class="stage" id="openwhen">
+  <div class="secHead">
+    <h2>رسائل لبعدين ✉️</h2>
+    <p>كل رسالة مقفلة... افتحيها بس بوقتها الصح 💗</p>
+  </div>
+  <div class="jar" id="owJar"></div>
+  <button class="btn nextHidden" id="toSurprise2" onclick="go('surprise');burst(90)">لسا في مفاجآت 🎁</button>
 </section>
 
 <!-- ═════════ 7 SURPRISE ═════════ -->
@@ -345,7 +421,30 @@ button{font-family:inherit}
     <p>هي رسمياً <b>أحلى رمرومة بالكون</b>،<br>صاحبة أحلى ضحكة، وأحلى نكد كمان 😌،<br>والوحيدة اللي إلها مفتاح هالقلب من 5 سنين ولآخر العمر.</p>
     <span class="stamp">ختم: شلكيك المعتمد ✔️</span>
   </div>
-  <p style="margin-top:30px;font-size:15px;color:var(--soft)">صنعت هالصفحة بكل سطر فيها كرمالك... 💗<br>هلق افتحي الشات وابعتيلي شو رأيك 😄</p>
+  <p style="margin-top:26px;font-size:15px;color:var(--soft)">صنعت هالصفحة بكل سطر فيها كرمالك... 💗</p>
+  <button class="btn" style="margin-top:22px" onclick="go('stars');initStars();burst(60)">استني... آخر شي إلك 🌟</button>
+</section>
+
+<!-- ═════════ 8 STARS ═════════ -->
+<section class="stage" id="stars">
+  <canvas id="starCanvas"></canvas>
+  <div class="starContent">
+    <h2>أمنية أخيرة 🌟</h2>
+    <p>حطي أمنية... وأنا بوعدك إسعى لتحقيقها 💫</p>
+    <div class="wishRow">
+      <input id="wishInput" type="text" placeholder="أمنيتك هون..." autocomplete="off">
+      <button class="btn" onclick="makeWish()" title="أطلقي الأمنية">🌠</button>
+    </div>
+    <div id="wishMsg" style="min-height:24px;margin-top:12px;color:#ffe3ef;font-weight:800;font-size:15px"></div>
+
+    <div class="replyBox">
+      <p style="color:#fff;font-weight:800;margin-bottom:10px;font-size:16px">وأخيراً... قوليلي شو حسيتي 💌</p>
+      <textarea id="replyInput" placeholder="اكتبيلي أي شي بخاطرك..."></textarea>
+      <button class="btn" style="margin-top:12px;width:100%" onclick="sendReply()">ابعتيلي 💗</button>
+      <div id="replyMsg" style="min-height:22px;margin-top:9px;color:#ffe3ef;font-weight:800;font-size:14.5px"></div>
+    </div>
+    <p style="color:#ffd9e8;margin-top:26px;font-size:14px">من أول القفل لهون... كل شي كان كرمالك 💗</p>
+  </div>
 </section>
 
 <canvas id="confetti"></canvas>
@@ -378,6 +477,59 @@ const couponData=[
  {e:'🥺',t:'كوبون "سامحني" فوري',s:'بينصرف بأي خناقة جاية، أنا بعتذر أول'},
  {e:'👑',t:'كوبون الملكة',s:'شهر كامل إنتي اللي بتختاري كل شي'}
 ];
+
+/* ═══ قصتنا (خط زمني) ═══ */
+const story=[
+ {y:'٢٠٢٠ · البداية',i:'🎧',t:'صدفة عـ Rave',b:'ما كنا نتخيل إنو خناقات لعبة رح تصير أطول قصة حب. من أول يوم وإنتي واخدة راسي كلو.'},
+ {y:'أول إشارة',i:'🌙',t:'"اشتقتلك"',b:'كنتي تختفي وترجعي تقوليها... وأنا طير من الفرح وما بيّن. هي الكلمة كانت بداية كل شي.'},
+ {y:'الليلة الأطول',i:'🗣️',t:'حكيتلك عن حالي',b:'أول ليلة فتحتلك قلبي، ونمنا عالخط سوا... هديك الليلة محفورة عندي لآخر العمر.'},
+ {y:'راس السنة ٢٠٢٥',i:'🎉',t:'أول "بحبك" بصوتي',b:'سجّلتلك الصوت وقلبي عم يدق بسرعة... لهلق كل ما اتذكرها بحس نفس الرجفة.'},
+ {y:'صار إلنا لغة',i:'😂',t:'شلكي و شلكتي',b:'بكل الدنيا مسبة، بيناتنا أحلى كلمة حب بالكون. وما بتنقال إلا إلك.'},
+ {y:'صرتي بكل تفصيل',i:'🍝',t:'باستا و عمرو دياب',b:'كل أكلة وكل أغنية صارت تحكي عنك. الدنيا كلها صارت تشبهك يا رمرومة.'},
+ {y:'اليوم',i:'💗',t:'٥ سنين... وكمّان',b:'مهما صار وخربطنا، بعرف شغلة وحدة أكيدة: ما بدي لهالحكاية تخلص أبداً.'},
+];
+
+/* ═══ أسباب بحبك ═══ */
+const loveReasons=[
+ 'لأنك أطيب قلب عرفتو بحياتي 🥹',
+ 'لأن ضحكتك بتنسّيني الدني كلها 😍',
+ 'لأنك حتى وقت بتنكدي بتضلي أحلى وحدة 😌',
+ 'لأنك الوحيدة اللي "شلكتي" بتصير بتمّك أحلى كلمة 💗',
+ 'لأنك بتتذكريني بأصغر التفاصيل 🧸',
+ 'لأنك خليتي باستا بشاميل إلها معنى 🍝',
+ 'لأني معك عرفت شو يعني بيت 🏠',
+ 'لأنك صبرتي عليي وأنا مو سهل 🙈',
+ 'لأن صوتك بيهدّيني مهما كنت متعصب 🎧',
+ 'لأنك بتفهميني حتى وأنا ساكت 🤍',
+ 'لأن كل أغنية عمرو دياب صارت إلها ريحتك 🎶',
+ 'لأنك بتخليني بدي صير أحسن نسخة من حالي ✨',
+ 'لأن ٥ سنين معك مرقوا متل يوم 🕊️',
+ 'لأنك حبي الأول والأخير 💘',
+ 'لأنو ولا يوم فكرت فيه حدا غيرك 😤💗',
+ 'لأنك رمرومتي... وهاد لحالو سبب كافي 🌸',
+ 'لأن حضنك أمان ما لقيتو بمطرح تاني 🤗',
+ 'لأنك ببساطة... نصيبي 🧿',
+];
+
+/* ═══ رسائل "افتحيها لما..." ═══ */
+const openWhen=[
+ {i:'🥹',t:'لما تشتاقيلي',b:'إذا فتحتي هالرسالة يعني إنتي مشتاقة... وأنا مشتاقلك أكتر. سكّري عينيك، أنا جنبك بكل نفس. رجعيلي أول ما تقدري، أنا مستنيكي دايماً. 💗'},
+ {i:'😤',t:'لما تزعلي مني',b:'أكيد أنا الغلطان، وأنا آسف من قلبي. ما في زعلة بتسوى إنك تبعدي عني ثانية. خدي وقتك، بس تذكري: أنا بحبك حتى وإنتي معصّبة مني. 🥺'},
+ {i:'🌧️',t:'لما تكوني تعبانة',b:'حطي راسك ع كتفي ولو بخيالك. إنتي أقوى مما بتتخيلي، وأنا فخور فيكي. كل شي بيعدّي، وأنا رح ضل جنبك لآخر الطريق. 🌸'},
+ {i:'😄',t:'لما تحبي تضحكي',b:'تذكري أول ما تخانقنا عـ Rave وكنت عامل حالي مو مهتم فيكي... وأنا غرقان لشوشتي! يا شلكتي، إنتي أحلى نكد بالكون 😂💗'},
+ {i:'💤',t:'لما ما تقدري تنامي',b:'عدّي نجوم بدل الغنم، وتذكري إنو في حدا بهالدنيا آخر شي بيفكر فيه قبل ما ينام هو إنتي. تصبحي ع خير يا عمري. 🌙'},
+ {i:'🎉',t:'لما يكون يومك حلو',b:'مبسوط لمبسوطيتك أكتر منّك! خبريني كل التفاصيل، لأنو فرحتك بتفرّحني، ونجاحك فخر إلي. بتستاهلي كل خير يا ريم. ✨'},
+];
+
+/* ═══ وين يوصل ردّها (عدّل الرقم/الإيميل من هون) ═══ */
+const REPLY={whatsapp:'', email:'prencemero@gmail.com'};
+
+/* ═══════════ 💾 حفظ التقدم ═══════════ */
+const SKEY='ramroumti_v1';
+let S={stage:'lock',furthest:0,unlocked:false,opened:[],coupons:[],reasons:0,openwhen:[],wish:'',reply:'',g1:false,g2:false};
+try{const raw=localStorage.getItem(SKEY);if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
+function showBtn(id){const b=document.getElementById(id);if(b){b.classList.remove('nextHidden');b.classList.add('nextShow')}}
 
 /* ═════════════ 🎵 أغانيك (MP3) ═════════════
    طريقة الإضافة:
@@ -485,8 +637,8 @@ for(let i=0;i<16;i++){
 }
 
 /* ═════════════ STAGE ROUTER ═════════════ */
-const order=['lock','hero','game1','letters','game2','question','finale','surprise'];
-const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',question:'🥺 السؤال',finale:'💗 الرسالة',surprise:'🎁 المفاجآت'};
+const order=['lock','hero','game1','letters','game2','timeline','question','finale','reasons','openwhen','surprise','stars'];
+const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',timeline:'🗓️ قصتنا',question:'🥺 السؤال',finale:'💗 الرسالة',reasons:'💝 أسباب بحبك',openwhen:'✉️ افتحيها لما',surprise:'🎁 المفاجآت',stars:'🌟 أمنية'};
 function go(id){
   document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -495,6 +647,7 @@ function go(id){
   document.getElementById('progFill').style.width=(idx/(order.length-1))*100+'%';
   document.getElementById('stageLabel').textContent=labels[id];
   if(id!=='lock')document.getElementById('hud').classList.add('show');
+  S.stage=id;if(idx>S.furthest)S.furthest=idx;save();
 }
 
 /* ═════════════ LOCK ═════════════ */
@@ -505,7 +658,7 @@ function tryPass(){
   const v=document.getElementById('pass').value.trim();
   const ok=answers.some(a=>v.includes(a.replace('ة','')) || v===a);
   if(ok){
-    sfx('win');
+    sfx('win');S.unlocked=true;save();
     document.getElementById('lockMsg').textContent='أهلين بأحلى رمرومة 🥹💗';
     setTimeout(()=>{go('hero');toggleMusic(true);typeIntro()},700);
   }else{
@@ -587,6 +740,7 @@ function drawG1(){
 }
 function winG1(){
   g1.running=false;clearInterval(g1.spawn);
+  S.g1=true;save();
   sfx('win');burst(80);
   const ov=document.getElementById('g1overlay');
   ov.classList.remove('hidden');
@@ -610,6 +764,7 @@ function openCard(i,el){
   document.getElementById('overlay').classList.add('open');
   el.classList.add('opened');el.querySelector('.icon').textContent=m.icon;
   opened.add(i);
+  if(!S.opened.includes(i)){S.opened.push(i);save()}
   document.getElementById('counter').textContent=`فتحتي ${opened.size} من ${memories.length}`;
   if(opened.size===memories.length){
     const b=document.getElementById('toGame2');
@@ -643,6 +798,7 @@ function flipCard(b,sym){
       document.getElementById('memPairs').textContent=pairs;
       flipped=[];lockBoard=false;
       if(pairs===6){
+        S.g2=true;save();
         sfx('win');burst(80);
         const btn=document.getElementById('toQuestion');
         btn.classList.remove('nextHidden');btn.classList.add('nextShow');
@@ -712,13 +868,173 @@ function accepted(){
 
 /* ═════════════ COUPONS ═════════════ */
 const cWrap=document.getElementById('coupons');
-couponData.forEach(c=>{
+couponData.forEach((c,i)=>{
   const d=document.createElement('div');
   d.className='coupon';
   d.innerHTML=`<span class="ce">${c.e}</span><span class="ct">${c.t}</span><span class="cs">${c.s}</span>`;
-  d.onclick=()=>{d.classList.toggle('used');sfx('pop')};
+  d.onclick=()=>{
+    d.classList.toggle('used');sfx('pop');
+    const used=d.classList.contains('used');
+    if(used&&!S.coupons.includes(i))S.coupons.push(i);
+    if(!used)S.coupons=S.coupons.filter(x=>x!==i);
+    save();
+  };
   cWrap.appendChild(d);
 });
+
+/* ═════════════ TIMELINE (قصتنا) ═════════════ */
+const tlWrap=document.getElementById('tlWrap');
+story.forEach(s=>{
+  const d=document.createElement('div');d.className='tl-item';
+  d.innerHTML=`<div class="tl-dot">${s.i}</div><div class="tl-card"><div class="tl-year">${s.y}</div><div class="tl-title">${s.t}</div><div class="tl-body">${s.b}</div></div>`;
+  tlWrap.appendChild(d);
+});
+let tlDone=false,tlStarted=false;
+function unlockTL(){if(tlDone)return;tlDone=true;showBtn('toQuestion2')}
+function initTimeline(){
+  const items=tlWrap.querySelectorAll('.tl-item');
+  if(tlStarted){items.forEach(it=>it.classList.add('show'));unlockTL();return}
+  tlStarted=true;
+  if('IntersectionObserver' in window){
+    const obs=new IntersectionObserver(ents=>{
+      ents.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');if(e.target===items[items.length-1])unlockTL()}});
+    },{threshold:.25});
+    items.forEach(it=>obs.observe(it));
+  }else{items.forEach(it=>it.classList.add('show'));unlockTL()}
+  setTimeout(()=>{items.forEach(it=>it.classList.add('show'));unlockTL()},8000);
+}
+
+/* ═════════════ REASONS (أسباب بحبك) ═════════════ */
+let reasonBag=[],reasonsSeen=0;
+function nextReason(){
+  if(!reasonBag.length)reasonBag=[...loveReasons].sort(()=>Math.random()-.5);
+  const r=reasonBag.pop();
+  const el=document.getElementById('reasonText');
+  el.classList.remove('pulse');void el.offsetWidth;el.textContent=r;el.classList.add('pulse');
+  sfx('pop');
+  reasonsSeen++;S.reasons=reasonsSeen;save();
+  document.getElementById('reasonCount').textContent='سبب رقم '+reasonsSeen+' 💗';
+  if(reasonsSeen>=3)showBtn('toOpenWhen');
+}
+
+/* ═════════════ OPEN-WHEN (افتحيها لما) ═════════════ */
+const owJar=document.getElementById('owJar');
+openWhen.forEach((o,i)=>{
+  const d=document.createElement('div');d.className='owLetter';
+  d.innerHTML=`<span class="owe">${o.i}</span><span class="owt">${o.t}</span>`;
+  d.onclick=()=>{
+    sfx('flip');
+    document.getElementById('cIcon').textContent=o.i;
+    document.getElementById('cTitle').textContent=o.t;
+    document.getElementById('cBody').textContent=o.b;
+    document.getElementById('overlay').classList.add('open');
+    d.classList.add('opened');
+    if(!S.openwhen.includes(i)){S.openwhen.push(i);save()}
+    showBtn('toSurprise2');
+  };
+  owJar.appendChild(d);
+});
+
+/* ═════════════ STARS (سماء نجوم + أمنية) ═════════════ */
+const sc=document.getElementById('starCanvas');let sctx=null,starsArr=[],shooting=[],starAnim=null;
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function initStars(){
+  sctx=sc.getContext('2d');
+  const r=sc.getBoundingClientRect();
+  sc.width=r.width*devicePixelRatio;sc.height=r.height*devicePixelRatio;
+  sctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  starsArr=[];
+  for(let i=0;i<90;i++)starsArr.push({x:Math.random()*r.width,y:Math.random()*r.height,r:Math.random()*1.6+.4,tw:Math.random()*6.28,sp:.02+Math.random()*.05});
+  if(reduceMotion){paintStars();return}
+  if(!starAnim)drawStars();
+}
+function paintStars(){
+  const W=sc.width/devicePixelRatio,H=sc.height/devicePixelRatio;
+  sctx.clearRect(0,0,W,H);sctx.fillStyle='#fff';
+  starsArr.forEach(s=>{sctx.globalAlpha=.7;sctx.beginPath();sctx.arc(s.x,s.y,s.r,0,7);sctx.fill()});
+  sctx.globalAlpha=1;
+}
+function drawStars(){
+  if(!sc.isConnected){starAnim=null;return}
+  const W=sc.width/devicePixelRatio,H=sc.height/devicePixelRatio;
+  sctx.clearRect(0,0,W,H);
+  starsArr.forEach(s=>{s.tw+=s.sp;sctx.globalAlpha=.35+Math.abs(Math.sin(s.tw))*.65;sctx.fillStyle='#fff';sctx.beginPath();sctx.arc(s.x,s.y,s.r,0,7);sctx.fill()});
+  sctx.globalAlpha=1;
+  shooting.forEach(sh=>{
+    sh.x+=sh.vx;sh.y+=sh.vy;sh.life--;
+    const g=sctx.createLinearGradient(sh.x,sh.y,sh.x-sh.vx*6,sh.y-sh.vy*6);
+    g.addColorStop(0,'rgba(255,255,255,.95)');g.addColorStop(1,'rgba(255,255,255,0)');
+    sctx.strokeStyle=g;sctx.lineWidth=2;sctx.lineCap='round';
+    sctx.beginPath();sctx.moveTo(sh.x,sh.y);sctx.lineTo(sh.x-sh.vx*6,sh.y-sh.vy*6);sctx.stroke();
+  });
+  shooting=shooting.filter(sh=>sh.life>0);
+  starAnim=requestAnimationFrame(drawStars);
+}
+function shootStar(){const W=sc.width/devicePixelRatio;shooting.push({x:Math.random()*W*.5+W*.25,y:18+Math.random()*46,vx:5+Math.random()*3,vy:3+Math.random()*2,life:64})}
+function makeWish(){
+  const v=document.getElementById('wishInput').value.trim();
+  const box=document.getElementById('wishMsg');
+  if(!v){box.textContent='اكتبي أمنيتك الأول 🌸';return}
+  S.wish=v;save();
+  if(!reduceMotion){shootStar();setTimeout(shootStar,180)}
+  sfx('win');burst(40);
+  box.textContent='أمنيتك طارت للسما ✨ وأنا بوعدك أسعالها 💗';
+}
+function sendReply(){
+  const v=document.getElementById('replyInput').value.trim();
+  const box=document.getElementById('replyMsg');
+  if(!v){box.textContent='اكتبيلي كلمتين بالأول 💗';return}
+  S.reply=v;save();
+  const msg='رد رمرومتي 💗:\n\n'+v;
+  if(REPLY.whatsapp){window.open('https://wa.me/'+REPLY.whatsapp+'?text='+encodeURIComponent(msg),'_blank')}
+  else if(REPLY.email){location.href='mailto:'+REPLY.email+'?subject='+encodeURIComponent('رد رمرومتي 💗')+'&body='+encodeURIComponent(v)}
+  else if(navigator.clipboard){navigator.clipboard.writeText(v).catch(()=>{})}
+  sfx('win');burst(30);
+  box.textContent='انبعت 💌 حبيتك... رح رد عليكي أول ما إشوفها';
+}
+
+/* ═════════════ RESTORE + CONTINUE ═════════════ */
+function restoreProgress(){
+  /* envelopes */
+  const envs=grid.querySelectorAll('.env');
+  S.opened.forEach(i=>{if(envs[i]){envs[i].classList.add('opened');envs[i].querySelector('.icon').textContent=memories[i].icon;opened.add(i)}});
+  document.getElementById('counter').textContent=`فتحتي ${opened.size} من ${memories.length}`;
+  if(opened.size===memories.length)showBtn('toGame2');
+  /* coupons */
+  const cps=cWrap.querySelectorAll('.coupon');S.coupons.forEach(i=>{if(cps[i])cps[i].classList.add('used')});
+  /* open-when */
+  const ows=owJar.querySelectorAll('.owLetter');S.openwhen.forEach(i=>{if(ows[i])ows[i].classList.add('opened')});
+  if(S.openwhen.length)showBtn('toSurprise2');
+  /* reasons */
+  reasonsSeen=S.reasons||0;
+  if(reasonsSeen){document.getElementById('reasonCount').textContent='سبب رقم '+reasonsSeen+' 💗';if(reasonsSeen>=3)showBtn('toOpenWhen')}
+  /* wish + reply */
+  if(S.wish)document.getElementById('wishInput').value=S.wish;
+  if(S.reply)document.getElementById('replyInput').value=S.reply;
+  /* unlock nav up to furthest reached */
+  if(S.furthest>1)showBtn('heroNext');
+  if(S.furthest>3)showBtn('toGame2');
+  if(S.furthest>4)showBtn('toQuestion');
+  if(S.furthest>5)showBtn('toQuestion2');
+  if(S.furthest>8)showBtn('toOpenWhen');
+  if(S.furthest>9)showBtn('toSurprise2');
+}
+(function setupContinue(){
+  if(S.furthest>1){
+    const cb=document.getElementById('continueBtn');
+    cb.textContent='كمّلي من وين وقفتي 💗';
+    cb.classList.add('show');
+    cb.onclick=()=>{
+      restoreProgress();
+      let t=(S.stage&&S.stage!=='lock')?S.stage:order[Math.min(S.furthest,order.length-1)];
+      go(t);toggleMusic(true);
+      if(t==='hero')typeIntro();
+      if(t==='game1')initG1();
+      if(t==='timeline')initTimeline();
+      if(t==='stars')initStars();
+    };
+  }
+})();
 </script>
 </body>
 </html>
