@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>💗 لرمرومتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marhey:wght@400;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFE3EC; --bg2:#FFD1DF; --bg3:#FFC3D6;
+  --card:#FFF9FB; --accent:#F26A96; --deep:#D94F7E; --deeper:#B03A63;
+  --text:#7A4A5C; --soft:#B98A9A; --gold:#F5C04E;
+  --shadow:0 10px 30px rgba(217,79,126,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Tajawal',sans-serif;
+  background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,var(--bg3) 100%);
+  color:var(--text); overflow-x:hidden; min-height:100vh;
+}
+h1,h2,h3,.display{font-family:'Marhey','Tajawal',sans-serif}
+button{font-family:inherit}
+
+/* ═══ floaties ═══ */
+.floaties{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.floaty{position:absolute;bottom:-8vh;animation:floatUp linear infinite;opacity:.5;will-change:transform}
+@keyframes floatUp{
+  0%{transform:translateY(0) translateX(0) rotate(0);opacity:0}
+  10%{opacity:.5}
+  100%{transform:translateY(-115vh) translateX(var(--sway)) rotate(var(--spin));opacity:0}
+}
+
+/* ═══ HUD ═══ */
+#hud{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:10px;padding:12px 16px;pointer-events:none;opacity:0;transition:opacity .5s}
+#hud.show{opacity:1}
+#musicBtn,#nextBtn{
+  pointer-events:auto;border:none;cursor:pointer;
+  width:44px;height:44px;border-radius:50%;
+  background:#fff;box-shadow:0 4px 14px rgba(217,79,126,.25);
+  font-size:20px;display:grid;place-items:center;
+  transition:transform .2s;
+}
+#musicBtn:active,#nextBtn:active{transform:scale(.9)}
+#musicBtn.on{animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress{
+  flex:1;height:10px;background:rgba(255,255,255,.6);
+  border-radius:999px;overflow:hidden;box-shadow:inset 0 2px 4px rgba(217,79,126,.15);
+}
+.progress i{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--deep));
+  border-radius:999px;transition:width .8s cubic-bezier(.2,1,.3,1);
+}
+#stageLabel{pointer-events:none;font-size:12px;font-weight:800;color:var(--deep);background:#fff;padding:5px 12px;border-radius:999px;box-shadow:0 3px 10px rgba(217,79,126,.15);white-space:nowrap}
+
+/* ═══ stages ═══ */
+.stage{position:relative;z-index:2;min-height:100vh;min-height:100dvh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px 56px;text-align:center}
+.stage.active{display:flex;animation:stageIn .7s ease both}
+@keyframes stageIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+
+.btn{
+  font-family:'Marhey','Tajawal',sans-serif;font-size:19px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--accent),var(--deep));color:#fff;
+  padding:15px 42px;border-radius:999px;box-shadow:var(--shadow);
+  transition:transform .2s,box-shadow .2s;
+}
+.btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 34px rgba(217,79,126,.35)}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:#fff;color:var(--deep);border:2px solid var(--bg2)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ═══ LOCK ═══ */
+#lock .lockIcon{font-size:74px;animation:wiggle 2.4s ease-in-out infinite;display:inline-block}
+@keyframes wiggle{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+#lock h1{font-size:clamp(28px,7vw,44px);color:var(--deep);margin:16px 0 8px}
+#lock p{color:var(--soft);font-size:17px;line-height:1.9;max-width:380px}
+#pass{
+  margin-top:22px;width:min(320px,84vw);
+  border:3px solid var(--bg2);border-radius:999px;
+  padding:14px 22px;font-size:19px;text-align:center;
+  font-family:'Tajawal',sans-serif;font-weight:700;color:var(--deep);
+  outline:none;background:#fff;transition:border-color .2s, transform .1s;
+}
+#pass:focus{border-color:var(--accent)}
+#pass.shake{animation:shake .45s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+#lockMsg{min-height:26px;margin-top:12px;font-weight:800;color:var(--deep);font-size:15px}
+
+/* ═══ HERO ═══ */
+#hero .bear{font-size:80px;display:inline-block;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+#hero h1{font-size:clamp(40px,10vw,70px);color:var(--deep);margin:14px 0 4px;text-shadow:0 3px 0 #fff}
+#typeLine{font-size:clamp(16px,4.4vw,20px);color:var(--soft);min-height:60px;max-width:440px;line-height:2}
+#typeLine::after{content:'|';animation:blink 1s step-end infinite;color:var(--accent)}
+@keyframes blink{50%{opacity:0}}
+
+/* ═══ GAME 1 : catch hearts ═══ */
+.gameWrap{width:min(560px,94vw);position:relative}
+#g1canvas{
+  width:100%;height:min(60vh,480px);display:block;
+  background:linear-gradient(180deg,#FFF0F5,#FFDBE7);
+  border-radius:26px;box-shadow:var(--shadow);
+  touch-action:none;cursor:none;
+}
+.gameTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pill{background:#fff;color:var(--deep);font-weight:800;font-size:15px;padding:7px 18px;border-radius:999px;box-shadow:0 4px 12px rgba(217,79,126,.12)}
+#g1overlay{
+  position:absolute;inset:0;top:52px;border-radius:26px;z-index:5;
+  background:rgba(255,240,245,.92);backdrop-filter:blur(3px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;
+}
+#g1overlay h3{color:var(--deep);font-size:26px}
+#g1overlay p{line-height:2;font-size:16px}
+#g1overlay.hidden{display:none}
+
+/* ═══ envelopes ═══ */
+.secHead h2{font-size:clamp(26px,6.5vw,40px);color:var(--deep);margin-bottom:4px}
+.secHead p{color:var(--soft);font-size:16px;margin-bottom:16px}
+.counter{display:inline-block;background:#fff;color:var(--deep);font-weight:800;font-size:14px;padding:6px 18px;border-radius:999px;box-shadow:0 4px 12px rgba(217,79,126,.12);margin-bottom:24px}
+.env-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:15px;width:100%;max-width:640px}
+.env{
+  background:var(--card);border:2px solid var(--bg2);border-radius:22px;
+  padding:22px 12px 16px;cursor:pointer;box-shadow:0 6px 18px rgba(217,79,126,.1);
+  transition:transform .2s,box-shadow .2s,border-color .2s;position:relative;
+}
+.env:hover{transform:translateY(-5px) rotate(-1.5deg);box-shadow:var(--shadow);border-color:var(--accent)}
+.env .icon{font-size:42px;display:block;margin-bottom:8px;transition:transform .3s}
+.env:hover .icon{transform:scale(1.15) rotate(6deg)}
+.env .t{font-weight:800;font-size:15px;color:var(--deep)}
+.env.opened{border-color:var(--accent);background:#FFF0F5}
+.env.opened::after{content:'💗';position:absolute;top:-10px;left:-6px;font-size:22px;animation:pop .4s ease both}
+@keyframes pop{from{transform:scale(0)}70%{transform:scale(1.35)}to{transform:scale(1)}}
+.nextHidden{display:none!important}
+.nextShow{display:inline-block;margin-top:26px;animation:stageIn .5s ease both}
+
+/* ═══ GAME 2 : memory match ═══ */
+.memGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;width:min(430px,92vw)}
+.mcard{aspect-ratio:3/4;perspective:700px;cursor:pointer;border:none;background:none;padding:0}
+.mcard .inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.3,1.2,.4,1);transform-style:preserve-3d}
+.mcard.flip .inner{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;border-radius:16px;display:grid;place-items:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  box-shadow:0 5px 14px rgba(217,79,126,.15);
+}
+.face.back{background:linear-gradient(135deg,var(--accent),var(--deep));font-size:26px;color:#fff}
+.face.front{background:#fff;transform:rotateY(180deg);font-size:34px;border:2px solid var(--bg2)}
+.mcard.done .face.front{background:#FFF0F5;border-color:var(--accent);animation:matched .5s ease}
+@keyframes matched{0%{transform:rotateY(180deg) scale(1)}50%{transform:rotateY(180deg) scale(1.15)}100%{transform:rotateY(180deg) scale(1)}}
+
+/* ═══ question ═══ */
+#question h2{font-size:clamp(30px,7.5vw,48px);color:var(--deep);line-height:1.6}
+#question .sub{color:var(--soft);font-size:17px;margin-top:8px}
+.q-area{position:relative;width:min(520px,94vw);height:240px;margin-top:30px}
+#yesBtn{position:absolute;right:16%;top:44px;font-size:22px;padding:16px 46px;transition:transform .25s ease}
+#noBtn{
+  position:absolute;left:16%;top:44px;
+  font-family:'Marhey','Tajawal',sans-serif;background:#fff;color:var(--soft);
+  border:2px solid var(--bg2);border-radius:999px;padding:14px 40px;font-size:18px;cursor:pointer;
+  transition:left .28s ease,top .28s ease,transform .2s,opacity .3s;
+}
+.tease{margin-top:12px;color:var(--deep);font-weight:800;font-size:16px;min-height:26px}
+
+/* ═══ finale ═══ */
+#finale h2{font-size:clamp(28px,7vw,44px);color:var(--deep);margin-bottom:24px}
+.letter{
+  background:var(--card);border-radius:28px;max-width:560px;width:100%;
+  padding:40px 28px 30px;box-shadow:var(--shadow);text-align:right;position:relative;
+}
+.letter::before{content:'💌';position:absolute;top:-24px;right:50%;transform:translateX(50%);font-size:44px}
+.letter p{font-size:17.5px;line-height:2.3;margin-bottom:16px}
+.letter .sign{font-family:'Marhey','Tajawal',sans-serif;color:var(--deep);font-size:22px;text-align:center;margin-top:8px}
+#surpriseBtn{margin-top:26px}
+
+/* ═══ surprises ═══ */
+#surprise h2{font-size:clamp(26px,6.5vw,40px);color:var(--deep);margin-bottom:6px}
+.coupons{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;width:100%;max-width:640px;margin-top:20px}
+.coupon{
+  background:repeating-linear-gradient(45deg,#fff,#fff 12px,#FFF3F7 12px,#FFF3F7 24px);
+  border:2.5px dashed var(--accent);border-radius:18px;padding:20px 16px;
+  cursor:pointer;transition:transform .2s,opacity .3s;position:relative;overflow:hidden;
+}
+.coupon:hover{transform:scale(1.03) rotate(-1deg)}
+.coupon .ce{font-size:36px;display:block;margin-bottom:6px}
+.coupon .ct{font-weight:800;color:var(--deep);font-size:16px;line-height:1.7}
+.coupon .cs{font-size:12.5px;color:var(--soft);margin-top:4px;display:block}
+.coupon.used{opacity:.5;transform:rotate(-2deg)}
+.coupon.used::after{
+  content:'انصرف ✂️';position:absolute;inset:0;display:grid;place-items:center;
+  font-family:'Marhey','Tajawal',sans-serif;font-size:26px;color:var(--deeper);
+  background:rgba(255,255,255,.55);transform:rotate(-10deg);
+}
+.cert{
+  margin-top:34px;background:#fff;border:6px double var(--gold);
+  border-radius:22px;padding:34px 24px;max-width:520px;width:100%;
+  box-shadow:var(--shadow);position:relative;
+}
+.cert .medal{font-size:52px}
+.cert h3{color:var(--deeper);font-size:26px;margin:8px 0 6px}
+.cert .name{font-family:'Marhey','Tajawal',sans-serif;font-size:38px;color:var(--deep);margin:8px 0}
+.cert p{font-size:15.5px;line-height:2;color:var(--text)}
+.cert .stamp{
+  display:inline-block;margin-top:14px;border:3px solid var(--deep);color:var(--deep);
+  font-family:'Marhey','Tajawal',sans-serif;border-radius:12px;padding:6px 18px;
+  transform:rotate(-6deg);font-size:15px;
+}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+
+/* modal */
+.overlay{position:fixed;inset:0;z-index:70;background:rgba(217,79,126,.28);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex;animation:stageIn .3s ease both}
+.card{
+  background:var(--card);border-radius:28px;max-width:440px;width:100%;
+  padding:36px 26px 28px;text-align:center;box-shadow:0 22px 60px rgba(122,42,73,.3);
+  animation:cardIn .45s cubic-bezier(.2,1.4,.4,1) both;max-height:82vh;overflow-y:auto;
+}
+@keyframes cardIn{from{transform:scale(.6) rotate(-3deg);opacity:0}to{transform:none;opacity:1}}
+.card .icon{font-size:56px;display:block;margin-bottom:10px}
+.card h3{color:var(--deep);font-size:26px;margin-bottom:14px}
+.card p{font-size:17px;line-height:2.1;white-space:pre-line}
+.card .close{margin-top:22px;background:var(--bg);color:var(--deep);border:none;border-radius:999px;padding:11px 34px;font-size:16px;font-weight:800;cursor:pointer;transition:background .2s}
+.card .close:hover{background:var(--bg3)}
+
+@media(max-width:480px){
+  .env-grid{grid-template-columns:repeat(2,1fr)}
+  .q-area{height:270px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .floaty{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="floaties" id="floaties" aria-hidden="true"></div>
+
+<div id="hud">
+  <button id="musicBtn" title="الموسيقى">🎵</button>
+  <button id="nextBtn" title="الأغنية التالية" style="display:none">⏭️</button>
+  <div class="progress"><i id="progFill"></i></div>
+  <span id="stageLabel">🔒</span>
+</div>
+
+<!-- ═════════ 0 LOCK ═════════ -->
+<section class="stage active" id="lock">
+  <span class="lockIcon">🔐</span>
+  <h1>وقّفي شوي...</h1>
+  <p>هالصفحة مو لأي حدا، هي لشخص واحد بس بكل الكون.<br>لحتى تفوتي، جاوبي عالسؤال السري:<br><b style="color:var(--deep)">شو اللقب اللي بيناديكي ياه؟ 😏</b></p>
+  <input id="pass" type="text" placeholder="اكتبي الجواب هون..." autocomplete="off">
+  <div id="lockMsg"></div>
+  <button class="btn" style="margin-top:14px" onclick="tryPass()">افتحي 🗝️</button>
+</section>
+
+<!-- ═════════ 1 HERO ═════════ -->
+<section class="stage" id="hero">
+  <span class="bear">🧸</span>
+  <h1>أهلين رمرومتي 💗</h1>
+  <p id="typeLine"></p>
+  <button class="btn nextHidden" id="heroNext" onclick="startJourney()">يلا نبلش الرحلة 🎀</button>
+</section>
+
+<!-- ═════════ 2 GAME 1 ═════════ -->
+<section class="stage" id="game1">
+  <div class="secHead">
+    <h2>المهمة الأولى 🕹️</h2>
+    <p>خلال الشهر اللي ما حكينا فيه... وقع من قلبي كتير قلوب.<br><b>الميقي 15 قلب</b> وانتبهي من القلوب المكسورة 💔</p>
+  </div>
+  <div class="gameWrap">
+    <div class="gameTop">
+      <span class="pill">💗 <span id="g1score">0</span> / 15</span>
+      <span class="pill" id="g1msg">حركي الدبدوب 🧸</span>
+    </div>
+    <div style="position:relative">
+      <canvas id="g1canvas"></canvas>
+      <div id="g1overlay" style="top:0">
+        <h3>جاهزة؟ 🧸</h3>
+        <p>حركي إصبعك أو الماوس يمين وشمال<br>لتلقطي القلوب بالدبدوب!</p>
+        <button class="btn" onclick="startG1()">يلا! 🎮</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ 3 ENVELOPES ═════════ -->
+<section class="stage" id="letters">
+  <div class="secHead">
+    <h2>رسائل ما وصلتك 💌</h2>
+    <p>كل قلب لقطتيه فتح صندوق بريد... افتحي الأظرف وحدة وحدة</p>
+  </div>
+  <span class="counter" id="counter">فتحتي 0 من 7</span>
+  <div class="env-grid" id="envGrid"></div>
+  <button class="btn nextHidden" id="toGame2" onclick="go('game2')">في مهمة تانية... 🎯</button>
+</section>
+
+<!-- ═════════ 4 GAME 2 ═════════ -->
+<section class="stage" id="game2">
+  <div class="secHead">
+    <h2>المهمة التانية 🃏</h2>
+    <p>لاقي كل زوج من ذكرياتنا... لأنو كل شي بحياتي صار إلو توأم بذكرياتك 😌</p>
+  </div>
+  <span class="counter"><span id="memPairs">0</span> / 6 أزواج · محاولات: <span id="memTries">0</span></span>
+  <div class="memGrid" id="memGrid" style="margin-top:16px"></div>
+  <button class="btn nextHidden" id="toQuestion" onclick="go('question')">هلق السؤال الكبير... 🥁</button>
+</section>
+
+<!-- ═════════ 5 QUESTION ═════════ -->
+<section class="stage" id="question">
+  <h2>طيب يا رمرومة...<br>بتسامحيني؟ 🥺</h2>
+  <p class="sub">فكري منيح قبل ما تجاوبي 😌</p>
+  <div class="q-area">
+    <button class="btn" id="yesBtn" onclick="accepted()">نعم 💗</button>
+    <button id="noBtn">لا 😤</button>
+  </div>
+  <p class="tease" id="tease"></p>
+</section>
+
+<!-- ═════════ 6 FINALE ═════════ -->
+<section class="stage" id="finale">
+  <h2>كنت متأكد إنك أطيب قلب 🥹💗</h2>
+  <div class="letter">
+    <p>رمرومتي...</p>
+    <p>بعرف إني غلطت، وبعرف إنو كلامي جرحك. مهما كنت معصب وقتها، ما كان لازم إحكي كلام بيجرحك، لأنك آخر إنسانة بهالدنيا بتستاهل مني كلمة موجعة.</p>
+    <p>وبدي تعرفي إنو من وقتها وأنا عم اشتغل ع حالي بجد: صرت وقت حس حالي رح اعصب، اسحب حالي وهدى، لأنو ما في ولا زعلة بهالدنيا بتسوى إني اجرحك أو خسرك.</p>
+    <p>شهر كامل بدون صوتك... كان أطول شهر بحياتي. خمس سنين، من خناقات Rave لأحلى شي صار معي. ما منعرف لا أنا ولا إنتي إيمتى صرنا حبايب بالظبط، بس أنا بعرف شغلة وحدة أكيدة: ما بدي لهالحكاية تخلص أبداً.</p>
+    <p class="sign">بحبك يا شلكتي 💗<br>ورح ضل حبك</p>
+  </div>
+  <button class="btn" id="surpriseBtn" onclick="go('surprise');burst(120)">استني... في شي كمان 👀🎁</button>
+</section>
+
+<!-- ═════════ 7 SURPRISE ═════════ -->
+<section class="stage" id="surprise">
+  <h2>هدايا الصلحة 🎁</h2>
+  <p style="color:var(--soft)">كوبونات رسمية، صالحة مدى الحياة، اكبسي عالكوبون لما تصرفيه 😄</p>
+  <div class="coupons" id="coupons"></div>
+  <div class="cert">
+    <span class="medal">🏅</span>
+    <h3>شهادة رسمية</h3>
+    <p>تشهد هالصفحة، وكل القلوب اللي فيها، إنو الآنسة</p>
+    <div class="name">ريم 🌸</div>
+    <p>هي رسمياً <b>أحلى رمرومة بالكون</b>،<br>صاحبة أحلى ضحكة، وأحلى نكد كمان 😌،<br>والوحيدة اللي إلها مفتاح هالقلب من 5 سنين ولآخر العمر.</p>
+    <span class="stamp">ختم: شلكيك المعتمد ✔️</span>
+  </div>
+  <p style="margin-top:30px;font-size:15px;color:var(--soft)">صنعت هالصفحة بكل سطر فيها كرمالك... 💗<br>هلق افتحي الشات وابعتيلي شو رأيك 😄</p>
+</section>
+
+<canvas id="confetti"></canvas>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeCard()">
+  <div class="card" role="dialog" aria-modal="true">
+    <span class="icon" id="cIcon"></span>
+    <h3 id="cTitle"></h3>
+    <p id="cBody"></p>
+    <button class="close" onclick="closeCard()">💗</button>
+  </div>
+</div>
+
+<script>
+/* ═════════════ DATA ═════════════ */
+const memories=[
+ {icon:'🎧',title:'أول ما التقينا',body:'صدفة عـ Rave... مين كان يصدق إنو أحلى شي بحياتي رح يبلش من هونيك؟\nكنا نتخانق كتير، وأنا كنت أعمل حالي مو مهتم وإنك مو عاجبتيني...\nبس الحقيقة؟ من أول يوم وإنتي واخدة راسي كلو. 🙈'},
+ {icon:'😂',title:'يا شلكتي',body:'كل العالم بتتدلع بـ"حبيبي" و"قلبي"...\nإلا نحنا: "يا شلكي" و"يا شلكتي".\nبكل المحافظات مسبة... بس بحماة، وبيناتنا، أحلى كلمة حب بالدنيا. وما بتنقال إلا إلك. 💗'},
+ {icon:'🍝',title:'باستا بشاميل',body:'صار كل شي بهالدنيا بيذكرني فيكي...\nكل ما اسمع عمرو دياب أو رامي صبري بتذكرك،\nوكل ما شوف باستا بشاميل بضحك لحالي وبقول: هي أكلة رمرومتي. 😄'},
+ {icon:'🧸',title:'دبدوبك',body:'إنتي حكيتيلي إنو وقت تشوفي دبدوبك بتتذكريني،\nووقت تشوفي طفل بالشارع شعرو كيوت وناعم كمان بتتذكرينا...\nهي التفاصيل الصغيرة هي اللي بتخليني متأكد إنو اللي بيناتنا مو شي عادي أبداً. 🥹'},
+ {icon:'🎉',title:'صوت راس السنة',body:'راس السنة 2025...\nأول ما سجلتلك هداك الصوت وحكيتلك "بحبك"، قلبي كان عم يدق بسرعة.\nوصدقيني، لهلق كل ما اتذكر هديك اللحظة بحس نفس الشعور بالظبط. 💘'},
+ {icon:'🌙',title:'اشتقتلك',body:'قبل ما نرتبط، كنتي تختفي فترة وترجعي تحكيلي: "اشتقتلك".\nوأنا كنت طير من الفرح بس ما بين. 😅\nوأول ليلة حكيتلك فيها عن حالي وعن مشاعري ونمنا عالخط سوا...\nهديك الليلة محفورة عندي، ما بنساها بحياتي.'},
+ {icon:'🙈',title:'طلعت غيران من زمان',body:'بتتذكري يوم كنتي بدك ترتبطي بحدا وأنا تخانقت معو؟\nوقتها ما كنت فاهم ليش أنا معصب هالقد... مع إنو ما كنا مرتبطين أصلاً.\nطلع قلبي مقرر من قبلي بزمان: هي إلي، وما بدي حدا غيري يكون بحياتها. 😤💗'}
+];
+const couponData=[
+ {e:'🍝',t:'كوبون باستا بشاميل',s:'عزيمة كاملة ع حسابي، بأي وقت'},
+ {e:'🎶',t:'كوبون سهرة عمرو دياب ورامي صبري',s:'بنسمع كل الأغاني اللي بتحبيها'},
+ {e:'🤗',t:'كوبون حضن طويل',s:'بدون أي سبب، صالح دايماً'},
+ {e:'😌',t:'كوبون "أنا الغلطان"',s:'يوم كامل بربح فيه كل النقاشات لصالحك'},
+ {e:'🥺',t:'كوبون "سامحني" فوري',s:'بينصرف بأي خناقة جاية، أنا بعتذر أول'},
+ {e:'👑',t:'كوبون الملكة',s:'شهر كامل إنتي اللي بتختاري كل شي'}
+];
+
+/* ═════════════ 🎵 أغانيك (MP3) ═════════════
+   طريقة الإضافة:
+   1. اعمل مجلد اسمو songs جنب هالملف
+   2. حط فيه أغانيك بصيغة mp3
+   3. عدّل الأسماء بالقائمة تحت لتطابق أسماء ملفاتك
+   إذا الملفات مو موجودة، بيشتغل اللحن المبرمج تلقائياً */
+const SONGS=[
+  {src:'songs/song1.mp3', name:'أغنية 1'},
+  {src:'songs/song2.mp3', name:'أغنية 2'},
+  {src:'songs/song3.mp3', name:'أغنية 3'},
+];
+let player=new Audio(), songIdx=0, useMp3=null; /* null = لسا ما جربنا */
+player.volume=.65;
+player.addEventListener('ended',()=>{nextSong()});
+function tryMp3(){
+  return new Promise(res=>{
+    if(!SONGS.length){res(false);return}
+    const test=new Audio();
+    test.src=SONGS[0].src;
+    test.addEventListener('canplaythrough',()=>res(true),{once:true});
+    test.addEventListener('error',()=>res(false),{once:true});
+    setTimeout(()=>res(false),2500);
+    test.load();
+  });
+}
+function playSong(){
+  player.src=SONGS[songIdx].src;
+  player.play().catch(()=>{});
+  document.getElementById('stageLabel').title=SONGS[songIdx].name;
+}
+function nextSong(){
+  if(!useMp3||!musicOn)return;
+  songIdx=(songIdx+1)%SONGS.length;
+  playSong();sfx('flip');
+}
+
+/* ═════════════ SOUND ENGINE (fallback music box + sfx) ═════════════ */
+let AC=null,musicOn=false,musicTimer=null;
+function ac(){if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}
+function note(freq,t,dur=.9,vol=.16,type='triangle'){
+  const a=ac(),o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol,t+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.05);
+}
+const N={C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880,C6:1046.5,B4:493.88,G4:392,A4:440,E4:329.63,F5:698.46};
+const melody=[ /* gentle original waltz-ish loop [note,beat] */
+ [N.E5,0],[N.G5,1],[N.A5,2],[N.G5,3.5],[N.E5,4.5],
+ [N.D5,6],[N.E5,7],[N.C5,8],[null,9],
+ [N.E5,12],[N.G5,13],[N.C6,14],[N.A5,15.5],[N.G5,16.5],
+ [N.A5,18],[N.G5,19],[N.E5,20],[null,21],
+];
+const bass=[[N.C5/2,0],[N.G4,3],[N.A4/1,6],[N.E4,9],[N.C5/2,12],[N.G4,15],[N.F5/2,18],[N.G4,21]];
+function playLoop(){
+  const a=ac(),beat=.32,start=a.currentTime+.05;
+  melody.forEach(([f,b])=>{if(f)note(f,start+b*beat,1.1,.14)});
+  bass.forEach(([f,b])=>{if(f)note(f,start+b*beat,1.6,.06,'sine')});
+  musicTimer=setTimeout(()=>{if(musicOn)playLoop()},24*beat*1000);
+}
+async function toggleMusic(force){
+  musicOn=force!==undefined?force:!musicOn;
+  const b=document.getElementById('musicBtn');
+  if(musicOn){
+    b.classList.add('on');b.textContent='🎵';
+    if(useMp3===null) useMp3=await tryMp3();
+    if(useMp3){
+      document.getElementById('nextBtn').style.display='grid';
+      playSong();
+    }else{
+      playLoop();
+    }
+  }else{
+    b.classList.remove('on');b.textContent='🔇';
+    clearTimeout(musicTimer);
+    player.pause();
+  }
+}
+document.getElementById('musicBtn').onclick=()=>toggleMusic();
+document.getElementById('nextBtn').onclick=()=>{if(useMp3&&musicOn)nextSong()};
+function sfx(type){
+  const a=ac(),t=a.currentTime;
+  if(type==='pop'){note(N.C6,t,.18,.2,'sine');note(N.E5*2,t+.06,.2,.15,'sine')}
+  if(type==='bad'){note(180,t,.3,.2,'sawtooth');note(140,t+.1,.3,.15,'sawtooth')}
+  if(type==='win'){[N.C5,N.E5,N.G5,N.C6].forEach((f,i)=>note(f,t+i*.12,.5,.2))}
+  if(type==='flip'){note(N.A5,t,.12,.12,'sine')}
+  if(type==='wrong'){note(N.B4,t,.2,.12,'square');note(N.G4,t+.12,.25,.1,'square')}
+}
+
+/* ═════════════ FLOATIES ═════════════ */
+const emo=['💗','🌸','💕','🎀','🩷','💞'];
+const fl=document.getElementById('floaties');
+for(let i=0;i<16;i++){
+  const s=document.createElement('span');
+  s.className='floaty';s.textContent=emo[i%emo.length];
+  s.style.left=Math.random()*100+'vw';
+  s.style.fontSize=(14+Math.random()*22)+'px';
+  s.style.animationDuration=(9+Math.random()*10)+'s';
+  s.style.animationDelay=(-Math.random()*14)+'s';
+  s.style.setProperty('--sway',(Math.random()*80-40)+'px');
+  s.style.setProperty('--spin',(Math.random()*260-130)+'deg');
+  fl.appendChild(s);
+}
+
+/* ═════════════ STAGE ROUTER ═════════════ */
+const order=['lock','hero','game1','letters','game2','question','finale','surprise'];
+const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',question:'🥺 السؤال',finale:'💗 الرسالة',surprise:'🎁 المفاجآت'};
+function go(id){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0});
+  const idx=order.indexOf(id);
+  document.getElementById('progFill').style.width=(idx/(order.length-1))*100+'%';
+  document.getElementById('stageLabel').textContent=labels[id];
+  if(id!=='lock')document.getElementById('hud').classList.add('show');
+}
+
+/* ═════════════ LOCK ═════════════ */
+const answers=['رمرومتي','رمرومة','رمرومه','رمروتي','رمرومي'];
+let wrongCount=0;
+const wrongMsgs=['لا مو هيك 😤 فكري منيح...','برضو لأ! مين بيناديكي هيك؟ 😏','طيب رح ساعدك: بتبلش بـ "رم..." 🙈','يااا... رمرومة نسيتي لقبك؟! 😂'];
+function tryPass(){
+  const v=document.getElementById('pass').value.trim();
+  const ok=answers.some(a=>v.includes(a.replace('ة','')) || v===a);
+  if(ok){
+    sfx('win');
+    document.getElementById('lockMsg').textContent='أهلين بأحلى رمرومة 🥹💗';
+    setTimeout(()=>{go('hero');toggleMusic(true);typeIntro()},700);
+  }else{
+    sfx('wrong');
+    const p=document.getElementById('pass');
+    p.classList.remove('shake');void p.offsetWidth;p.classList.add('shake');
+    document.getElementById('lockMsg').textContent=wrongMsgs[Math.min(wrongCount,wrongMsgs.length-1)];
+    wrongCount++;
+  }
+}
+document.getElementById('pass').addEventListener('keydown',e=>{if(e.key==='Enter')tryPass()});
+
+/* ═════════════ HERO TYPING ═════════════ */
+const introText='في شخص برمجلك هالصفحة سطر سطر... 👨‍💻\nمشان يحكيلك شغلات ما عرف يحكيها بصوتو.\nقدامك رحلة صغيرة: ألعاب، رسائل، ومفاجآت... جاهزة؟';
+function typeIntro(){
+  const el=document.getElementById('typeLine');el.textContent='';
+  let i=0;
+  const iv=setInterval(()=>{
+    el.textContent=introText.slice(0,++i);
+    if(i>=introText.length){clearInterval(iv);document.getElementById('heroNext').classList.remove('nextHidden');document.getElementById('heroNext').classList.add('nextShow')}
+  },42);
+}
+function startJourney(){go('game1');initG1()}
+
+/* ═════════════ GAME 1 : CATCH HEARTS ═════════════ */
+const cvs=document.getElementById('g1canvas');const cx=cvs.getContext('2d');
+let g1={score:0,items:[],running:false,px:.5,raf:null,spawn:null};
+function initG1(){
+  const r=cvs.getBoundingClientRect();
+  cvs.width=r.width*devicePixelRatio;cvs.height=r.height*devicePixelRatio;
+  cx.scale(devicePixelRatio,devicePixelRatio);
+  drawG1();
+}
+function startG1(){
+  document.getElementById('g1overlay').classList.add('hidden');
+  g1={score:0,items:[],running:true,px:.5};
+  document.getElementById('g1score').textContent='0';
+  document.getElementById('g1msg').textContent='يلااا 🧸';
+  g1.spawn=setInterval(()=>{
+    if(!g1.running)return;
+    const bad=Math.random()<.22;
+    g1.items.push({x:Math.random()*.9+.05,y:-.06,v:.004+Math.random()*.004+g1.score*.0002,e:bad?'💔':'💗',bad});
+  },520);
+  loopG1();
+}
+function move(e){
+  const r=cvs.getBoundingClientRect();
+  const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+  g1.px=Math.max(.06,Math.min(.94,x/r.width));
+}
+cvs.addEventListener('mousemove',move);
+cvs.addEventListener('touchmove',e=>{e.preventDefault();move(e)},{passive:false});
+cvs.addEventListener('touchstart',e=>{e.preventDefault();move(e)},{passive:false});
+function loopG1(){
+  const W=cvs.width/devicePixelRatio,H=cvs.height/devicePixelRatio;
+  cx.clearRect(0,0,W,H);
+  /* bear */
+  const bx=g1.px*W,by=H-38;
+  cx.font='44px serif';cx.textAlign='center';cx.fillText('🧸',bx,by+14);
+  /* items */
+  g1.items.forEach(it=>{
+    it.y+=it.v;
+    cx.font='30px serif';cx.fillText(it.e,it.x*W,it.y*H);
+    const dx=Math.abs(it.x*W-bx),dy=Math.abs(it.y*H-(by-6));
+    if(dx<34&&dy<30){
+      it.hit=true;
+      if(it.bad){g1.score=Math.max(0,g1.score-1);sfx('bad');document.getElementById('g1msg').textContent='آخخ قلب مكسور 💔'}
+      else{g1.score++;sfx('pop');document.getElementById('g1msg').textContent=['حلوو!','كفو 😍','عيني عليكي','برافو رمرومة'][Math.floor(Math.random()*4)]}
+      document.getElementById('g1score').textContent=g1.score;
+    }
+  });
+  g1.items=g1.items.filter(it=>!it.hit&&it.y<1.1);
+  if(g1.score>=15){winG1();return}
+  if(g1.running)g1.raf=requestAnimationFrame(loopG1);
+}
+function drawG1(){
+  const W=cvs.width/devicePixelRatio,H=cvs.height/devicePixelRatio;
+  cx.clearRect(0,0,W,H);
+}
+function winG1(){
+  g1.running=false;clearInterval(g1.spawn);
+  sfx('win');burst(80);
+  const ov=document.getElementById('g1overlay');
+  ov.classList.remove('hidden');
+  ov.innerHTML='<h3>15 قلب! 🥳</h3><p>شفتي قديش قلبي وقع فيكي؟ 😄<br>هلق فتحو صناديق البريد...</p><button class="btn" onclick="go(\'letters\')">شوفي الرسائل 💌</button>';
+}
+
+/* ═════════════ ENVELOPES ═════════════ */
+const grid=document.getElementById('envGrid');const opened=new Set();
+memories.forEach((m,i)=>{
+  const d=document.createElement('button');
+  d.className='env';
+  d.innerHTML=`<span class="icon">💌</span><span class="t">${m.title}</span>`;
+  d.onclick=()=>openCard(i,d);
+  grid.appendChild(d);
+});
+function openCard(i,el){
+  const m=memories[i];sfx('flip');
+  document.getElementById('cIcon').textContent=m.icon;
+  document.getElementById('cTitle').textContent=m.title;
+  document.getElementById('cBody').textContent=m.body;
+  document.getElementById('overlay').classList.add('open');
+  el.classList.add('opened');el.querySelector('.icon').textContent=m.icon;
+  opened.add(i);
+  document.getElementById('counter').textContent=`فتحتي ${opened.size} من ${memories.length}`;
+  if(opened.size===memories.length){
+    const b=document.getElementById('toGame2');
+    b.classList.remove('nextHidden');b.classList.add('nextShow');
+  }
+}
+function closeCard(){document.getElementById('overlay').classList.remove('open')}
+
+/* ═════════════ GAME 2 : MEMORY MATCH ═════════════ */
+const symbols=['🧸','🍝','🎧','🎉','🌙','🎀'];
+let deck=[...symbols,...symbols].sort(()=>Math.random()-.5);
+let flipped=[],pairs=0,tries=0,lockBoard=false;
+const mg=document.getElementById('memGrid');
+deck.forEach(sym=>{
+  const b=document.createElement('button');
+  b.className='mcard';
+  b.innerHTML=`<div class="inner"><div class="face back">💗</div><div class="face front">${sym}</div></div>`;
+  b.onclick=()=>flipCard(b,sym);
+  mg.appendChild(b);
+});
+function flipCard(b,sym){
+  if(lockBoard||b.classList.contains('flip'))return;
+  sfx('flip');b.classList.add('flip');flipped.push({b,sym});
+  if(flipped.length===2){
+    lockBoard=true;tries++;
+    document.getElementById('memTries').textContent=tries;
+    const [a,c]=flipped;
+    if(a.sym===c.sym){
+      pairs++;sfx('pop');
+      a.b.classList.add('done');c.b.classList.add('done');
+      document.getElementById('memPairs').textContent=pairs;
+      flipped=[];lockBoard=false;
+      if(pairs===6){
+        sfx('win');burst(80);
+        const btn=document.getElementById('toQuestion');
+        btn.classList.remove('nextHidden');btn.classList.add('nextShow');
+      }
+    }else{
+      sfx('wrong');
+      setTimeout(()=>{a.b.classList.remove('flip');c.b.classList.remove('flip');flipped=[];lockBoard=false},750);
+    }
+  }
+}
+
+/* ═════════════ QUESTION ═════════════ */
+const noBtn=document.getElementById('noBtn');
+const yesBtn=document.getElementById('yesBtn');
+const tease=document.getElementById('tease');
+const teases=['أكيد؟ 🥺','لا تجربي حتى 😤','الزر هرب منك 😂','رمرومة... 🥹','شفتي؟ حتى الزر رافض 😌','خلص كبسي نعم 💗','يلااا 🎀'];
+let noTries=0;
+function runAway(){
+  const area=noBtn.parentElement.getBoundingClientRect();
+  const x=Math.random()*(area.width-noBtn.offsetWidth);
+  const y=Math.random()*(area.height-noBtn.offsetHeight);
+  noBtn.style.left=x+'px';noBtn.style.top=y+'px';
+  noTries++;sfx('flip');
+  noBtn.style.transform=`scale(${Math.max(.45,1-noTries*.09)})`;
+  yesBtn.style.transform=`scale(${Math.min(1.7,1+noTries*.09)})`;
+  tease.textContent=teases[Math.min(noTries-1,teases.length-1)];
+  if(noTries>=8){noBtn.style.opacity='0';noBtn.style.pointerEvents='none';tease.textContent='خلص ما ضل غير خيار واحد 😌💗'}
+}
+noBtn.addEventListener('mouseover',runAway);
+noBtn.addEventListener('touchstart',e=>{e.preventDefault();runAway()},{passive:false});
+noBtn.addEventListener('click',e=>{e.preventDefault();runAway()});
+
+/* ═════════════ CONFETTI ═════════════ */
+const cv=document.getElementById('confetti'),ctx2=cv.getContext('2d');
+let pieces=[],raf2=null;
+function resizeC(){cv.width=innerWidth;cv.height=innerHeight}
+resizeC();addEventListener('resize',()=>{resizeC();initG1()});
+const colors=['#F26A96','#FFD1DF','#D94F7E','#FFF','#FFB3C9','#F5C04E'];
+function burst(n){
+  for(let i=0;i<n;i++){
+    pieces.push({
+      x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.4,
+      vy:2+Math.random()*3.5,vx:Math.random()*2-1,
+      r:Math.random()*360,vr:Math.random()*8-4,
+      size:8+Math.random()*10,heart:Math.random()<.35,
+      c:colors[Math.floor(Math.random()*colors.length)]
+    });
+  }
+  if(!raf2)tickC();
+}
+function tickC(){
+  ctx2.clearRect(0,0,cv.width,cv.height);
+  pieces.forEach(p=>{
+    p.y+=p.vy;p.x+=p.vx+Math.sin(p.y*.02);p.r+=p.vr;
+    ctx2.save();ctx2.translate(p.x,p.y);ctx2.rotate(p.r*Math.PI/180);
+    if(p.heart){ctx2.font=p.size+'px serif';ctx2.fillText('💗',-p.size/2,p.size/2)}
+    else{ctx2.fillStyle=p.c;ctx2.fillRect(-p.size/2,-p.size/4,p.size,p.size/2)}
+    ctx2.restore();
+  });
+  pieces=pieces.filter(p=>p.y<cv.height+30);
+  if(pieces.length){raf2=requestAnimationFrame(tickC)}else{raf2=null;ctx2.clearRect(0,0,cv.width,cv.height)}
+}
+function accepted(){
+  go('finale');sfx('win');
+  burst(160);setTimeout(()=>burst(120),900);setTimeout(()=>burst(90),2000);
+}
+
+/* ═════════════ COUPONS ═════════════ */
+const cWrap=document.getElementById('coupons');
+couponData.forEach(c=>{
+  const d=document.createElement('div');
+  d.className='coupon';
+  d.innerHTML=`<span class="ce">${c.e}</span><span class="ct">${c.t}</span><span class="cs">${c.s}</span>`;
+  d.onclick=()=>{d.classList.toggle('used');sfx('pop')};
+  cWrap.appendChild(d);
+});
+</script>
+</body>
+</html>
