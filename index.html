@@ -268,6 +268,33 @@ button{font-family:inherit}
 .replyBox{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.35);border-radius:22px;padding:18px;margin-top:24px;width:min(460px,92vw);backdrop-filter:blur(4px)}
 #replyInput{width:100%;min-height:92px;border-radius:14px;border:none;padding:12px 14px;font-family:'Tajawal',sans-serif;font-size:16px;resize:vertical;color:var(--deep);outline:none;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 
+/* ═══ QUIZ ═══ */
+.quizCard{background:var(--card);border:2px solid var(--bg2);border-radius:24px;box-shadow:var(--shadow);max-width:480px;width:92vw;padding:26px 22px;margin-top:14px}
+.qNum{color:var(--accent);font-weight:800;font-size:13px;font-family:'Marhey','Tajawal',sans-serif;margin-bottom:6px}
+.qText{color:var(--deep);font-weight:800;font-size:20px;line-height:1.6;margin-bottom:16px}
+.qOpts{display:grid;gap:10px}
+.qOpt{background:#fff;border:2px solid var(--bg2);border-radius:14px;padding:12px 16px;font-size:16px;font-weight:700;color:var(--text);cursor:pointer;font-family:'Tajawal',sans-serif;transition:transform .15s,border-color .2s,background .2s;text-align:right}
+.qOpt:hover:not(:disabled){transform:translateY(-2px);border-color:var(--accent)}
+.qOpt.correct{background:#E8F9EE;border-color:#4CAF7D;color:#2E7D52}
+.qOpt.wrong{background:#FDECEF;border-color:var(--deep);color:var(--deeper)}
+.qOpt:disabled{cursor:default}
+.qScore{margin-top:14px;color:var(--deep);font-weight:800;font-size:16px;min-height:24px}
+
+/* ═══ SCRATCH ═══ */
+.scratchWrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;width:100%;max-width:640px;margin-top:14px}
+.scratchCard{position:relative;height:150px;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:2px solid var(--bg2)}
+.scratchReveal{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px;text-align:center;background:#FFF0F5}
+.scratchReveal .se{font-size:34px}
+.scratchReveal .st{color:var(--deep);font-weight:800;font-size:15.5px;line-height:1.6}
+.scratchCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+.scratchCard.done .scratchCanvas{opacity:0;transition:opacity .5s;pointer-events:none}
+
+/* ═══ WHEEL ═══ */
+.wheelBox{position:relative;width:300px;max-width:86vw;aspect-ratio:1;margin-top:10px;display:grid;place-items:center}
+#wheelCanvas{width:100%;height:100%;transition:transform 4.2s cubic-bezier(.15,.9,.25,1);filter:drop-shadow(0 10px 24px rgba(217,79,126,.3))}
+.wheelPin{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:30px;color:var(--deep);z-index:3;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
+.wheelResult{margin-top:18px;color:var(--deep);font-weight:800;font-size:18px;min-height:26px;font-family:'Marhey','Tajawal',sans-serif;max-width:440px;line-height:1.6}
+
 @media(max-width:480px){
   .env-grid{grid-template-columns:repeat(2,1fr)}
   .q-area{height:270px}
@@ -349,7 +376,22 @@ button{font-family:inherit}
   </div>
   <span class="counter"><span id="memPairs">0</span> / 6 أزواج · محاولات: <span id="memTries">0</span></span>
   <div class="memGrid" id="memGrid" style="margin-top:16px"></div>
-  <button class="btn nextHidden" id="toQuestion" onclick="go('timeline');initTimeline()">قبل السؤال الكبير... 🥁</button>
+  <button class="btn nextHidden" id="toQuestion" onclick="go('quiz')">في اختبار صغير... 🧠</button>
+</section>
+
+<!-- ═════════ 4.3 QUIZ ═════════ -->
+<section class="stage" id="quiz">
+  <div class="secHead">
+    <h2>قديش بتعرفينا؟ 🧠</h2>
+    <p>اختبار سريع عن قصتنا... خليني شوف ذاكرتك يا رمرومة 😏</p>
+  </div>
+  <div class="quizCard">
+    <div class="qNum" id="qNum"></div>
+    <div class="qText" id="qText"></div>
+    <div class="qOpts" id="qOpts"></div>
+    <div class="qScore" id="qScore"></div>
+  </div>
+  <button class="btn nextHidden" id="toTimeline" onclick="go('timeline');initTimeline()">هلق قصتنا... 🗓️</button>
 </section>
 
 <!-- ═════════ 4.5 TIMELINE ═════════ -->
@@ -395,7 +437,17 @@ button{font-family:inherit}
   <div class="reasonBox"><span id="reasonText">جاهزة؟ اكبسي تحت 👇</span></div>
   <div class="reasonCount" id="reasonCount"></div>
   <button class="btn" style="margin-top:20px" onclick="nextReason()">سبب تاني 💗</button>
-  <button class="btn ghost nextHidden" id="toOpenWhen" style="margin-top:14px" onclick="go('openwhen')">في كمان إلك... ✉️</button>
+  <button class="btn ghost nextHidden" id="toOpenWhen" style="margin-top:14px" onclick="go('scratch')">في كمان إلك... 🎟️</button>
+</section>
+
+<!-- ═════════ 6.6 SCRATCH ═════════ -->
+<section class="stage" id="scratch">
+  <div class="secHead">
+    <h2>احكيلي بالمحكوك 🎟️</h2>
+    <p>حكّي بإصبعك (أو الماوس) عالبطاقات... تحت كل وحدة سر 🤫</p>
+  </div>
+  <div class="scratchWrap" id="scratchWrap"></div>
+  <button class="btn nextHidden" id="toOpenWhen2" onclick="go('openwhen')">لسا في رسائل... ✉️</button>
 </section>
 
 <!-- ═════════ 6.7 OPEN-WHEN ═════════ -->
@@ -422,7 +474,22 @@ button{font-family:inherit}
     <span class="stamp">ختم: شلكيك المعتمد ✔️</span>
   </div>
   <p style="margin-top:26px;font-size:15px;color:var(--soft)">صنعت هالصفحة بكل سطر فيها كرمالك... 💗</p>
-  <button class="btn" style="margin-top:22px" onclick="go('stars');initStars();burst(60)">استني... آخر شي إلك 🌟</button>
+  <button class="btn" style="margin-top:22px" onclick="go('wheel');initWheel()">استني... جربي حظك 🎡</button>
+</section>
+
+<!-- ═════════ 7.5 WHEEL ═════════ -->
+<section class="stage" id="wheel">
+  <div class="secHead">
+    <h2>عجلة الحظ 🎡</h2>
+    <p>برمي كل الجوائز... وكلها إلك، بس خلي الحظ يختار الأولى 😄</p>
+  </div>
+  <div class="wheelBox">
+    <span class="wheelPin">🔻</span>
+    <canvas id="wheelCanvas" width="600" height="600"></canvas>
+  </div>
+  <div class="wheelResult" id="wheelResult"></div>
+  <button class="btn" id="spinBtn" style="margin-top:16px" onclick="spinWheel()">دوّريها! 🎡</button>
+  <button class="btn ghost nextHidden" id="toStars" style="margin-top:14px" onclick="go('stars');initStars();burst(60)">آخر شي إلك... 🌟</button>
 </section>
 
 <!-- ═════════ 8 STARS ═════════ -->
@@ -521,12 +588,46 @@ const openWhen=[
  {i:'🎉',t:'لما يكون يومك حلو',b:'مبسوط لمبسوطيتك أكتر منّك! خبريني كل التفاصيل، لأنو فرحتك بتفرّحني، ونجاحك فخر إلي. بتستاهلي كل خير يا ريم. ✨'},
 ];
 
+/* ═══ اختبار "قديش بتعرفينا؟" ═══ */
+const quizQs=[
+ {q:'وين التقينا أول مرة؟ 👀',o:['بالجامعة','صدفة عـ Rave','عالإنستا','بعرس'],c:1,
+  yes:'أكيد بتتذكري 😌 أحلى صدفة بحياتي',no:'رمرومة!! عـ Rave يا قلبي! 😱'},
+ {q:'شو اللقب اللي بيناتنا بس؟ 😂',o:['حبيبي وحبيبتي','قلبي وعمري','شلكي وشلكتي','توتو وفوفو'],c:2,
+  yes:'ههههه أكيد! أحلى مسبة صارت حب 😂💗',no:'شو؟! نسيتي "شلكتي"؟ مستحيل 😤'},
+ {q:'أول مرة قلتلك "بحبك" بصوتي... إيمتى؟ 🎙️',o:['عيد ميلادك','راس السنة 2025','أول ما حكينا','بمشوار'],c:1,
+  yes:'وقلبي كان رح يوقف من الدقان 🥹',no:'راس السنة 2025 يا عمري... هديك الليلة! 🎉'},
+ {q:'شو الأكلة اللي بتذكرني فيكي؟ 🍽️',o:['شاورما','منسف','باستا بشاميل','بيتزا'],c:2,
+  yes:'أكلة رمرومتي الرسمية 🍝😄',no:'لا لا... باستا بشاميل! أكلتك المفضلة 🍝'},
+ {q:'مين المطربين تبعونا؟ 🎶',o:['عمرو دياب ورامي صبري','فيروز وأم كلثوم','وائل كفوري','ناصيف زيتون'],c:0,
+  yes:'كل أغانيهن صارت بتحكي عنك 🎧',no:'عمرو دياب ورامي صبري يا ست الكل! 🎶'},
+ {q:'قديش صارلنا نعرف بعض؟ ⏳',o:['3 سنين','4 سنين','5 سنين','سنتين'],c:2,
+  yes:'خمس سنين... وبدي خمسين كمان 💗',no:'5 سنين كاملة يا رمرومة! من 2020 🥹'},
+];
+
+/* ═══ بطاقات المحكوك ═══ */
+const scratchSecrets=[
+ {e:'🤫',t:'أول ما شفتك عملت حالي مو مهتم... وأنا كنت ذايب من جوا'},
+ {e:'📱',t:'كنت اقعد اعيد قراءة شاتاتنا القديمة وقت اشتاقلك'},
+ {e:'🥹',t:'صوتك الصباحي أحلى صوت بسمعو بحياتي'},
+ {e:'💍',t:'من زمان وأنا بحلم بيوم بيكون فيه بيتنا... أنا وإنتي بس'},
+];
+
+/* ═══ جوائز عجلة الحظ ═══ */
+const wheelPrizes=[
+ {e:'🍦',t:'بوظة عالحساب'},
+ {e:'🎬',t:'سهرة فيلم بتختاريه'},
+ {e:'🌹',t:'باقة ورد مفاجئة'},
+ {e:'🍫',t:'علبة شوكولا'},
+ {e:'📞',t:'مكالمة لتناموا الصبح'},
+ {e:'🎁',t:'هدية سرية 🤫'},
+];
+
 /* ═══ وين يوصل ردّها (عدّل الرقم/الإيميل من هون) ═══ */
 const REPLY={whatsapp:'4915208620748', email:'prencemero@gmail.com'};
 
 /* ═══════════ 💾 حفظ التقدم ═══════════ */
 const SKEY='ramroumti_v1';
-let S={stage:'lock',furthest:0,unlocked:false,opened:[],coupons:[],reasons:0,openwhen:[],wish:'',reply:'',g1:false,g2:false};
+let S={stage:'lock',furthest:0,unlocked:false,opened:[],coupons:[],reasons:0,openwhen:[],wish:'',reply:'',g1:false,g2:false,quizDone:false,quizScore:0,scratched:[],wheelPrize:-1};
 try{const raw=localStorage.getItem(SKEY);if(raw)S=Object.assign(S,JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(SKEY,JSON.stringify(S))}catch(e){}}
 function showBtn(id){const b=document.getElementById(id);if(b){b.classList.remove('nextHidden');b.classList.add('nextShow')}}
@@ -637,8 +738,8 @@ for(let i=0;i<16;i++){
 }
 
 /* ═════════════ STAGE ROUTER ═════════════ */
-const order=['lock','hero','game1','letters','game2','timeline','question','finale','reasons','openwhen','surprise','stars'];
-const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',timeline:'🗓️ قصتنا',question:'🥺 السؤال',finale:'💗 الرسالة',reasons:'💝 أسباب بحبك',openwhen:'✉️ افتحيها لما',surprise:'🎁 المفاجآت',stars:'🌟 أمنية'};
+const order=['lock','hero','game1','letters','game2','quiz','timeline','question','finale','reasons','scratch','openwhen','surprise','wheel','stars'];
+const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',quiz:'🧠 الاختبار',timeline:'🗓️ قصتنا',question:'🥺 السؤال',finale:'💗 الرسالة',reasons:'💝 أسباب بحبك',scratch:'🎟️ المحكوك',openwhen:'✉️ افتحيها لما',surprise:'🎁 المفاجآت',wheel:'🎡 عجلة الحظ',stars:'🌟 أمنية'};
 function go(id){
   document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -993,6 +1094,159 @@ function sendReply(){
   box.textContent='انبعت 💌 حبيتك... رح رد عليكي أول ما إشوفها';
 }
 
+/* ═════════════ QUIZ (قديش بتعرفينا؟) ═════════════ */
+let qIdx=0,qScore=0;
+function renderQuiz(){
+  if(qIdx>=quizQs.length){finishQuiz();return}
+  const q=quizQs[qIdx];
+  document.getElementById('qNum').textContent='سؤال '+(qIdx+1)+' من '+quizQs.length;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qScore').textContent='';
+  const box=document.getElementById('qOpts');box.innerHTML='';
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='qOpt';b.textContent=opt;
+    b.onclick=()=>answerQuiz(i,b,box);
+    box.appendChild(b);
+  });
+}
+function answerQuiz(i,btn,box){
+  const q=quizQs[qIdx];
+  [...box.children].forEach(b=>b.disabled=true);
+  if(i===q.c){
+    qScore++;btn.classList.add('correct');sfx('pop');
+    document.getElementById('qScore').textContent=q.yes;
+  }else{
+    btn.classList.add('wrong');box.children[q.c].classList.add('correct');sfx('wrong');
+    document.getElementById('qScore').textContent=q.no;
+  }
+  qIdx++;
+  setTimeout(renderQuiz,1800);
+}
+function finishQuiz(){
+  S.quizDone=true;S.quizScore=qScore;save();
+  sfx('win');burst(70);
+  document.getElementById('qNum').textContent='النتيجة النهائية 🏆';
+  document.getElementById('qText').textContent='جبتي '+qScore+' من '+quizQs.length+'!';
+  const msg=qScore===quizQs.length?'علامة كاملة! أكيد... إنتي كاتبة القصة معي 🥹💗'
+    :qScore>=4?'ممتازة يا رمرومة! واضح إني ساكن براسك 😌💗'
+    :qScore>=2?'مقبول... بس واضح لازم نعيد الذكريات سوا من الأول 😏'
+    :'يا فضيحتي 😂 خلص، رح خبرك القصة كلها من الأول 👇';
+  document.getElementById('qOpts').innerHTML='';
+  document.getElementById('qScore').textContent=msg;
+  showBtn('toTimeline');
+}
+renderQuiz();
+
+/* ═════════════ SCRATCH (احكيلي بالمحكوك) ═════════════ */
+const sWrap=document.getElementById('scratchWrap');
+let scratchDoneCount=0;
+function markScratchDone(idx,card){
+  if(card.classList.contains('done'))return;
+  card.classList.add('done');
+  scratchDoneCount++;sfx('win');burst(30);
+  if(!S.scratched.includes(idx)){S.scratched.push(idx);save()}
+  if(scratchDoneCount>=scratchSecrets.length)showBtn('toOpenWhen2');
+}
+scratchSecrets.forEach((s,idx)=>{
+  const card=document.createElement('div');card.className='scratchCard';
+  card.innerHTML=`<div class="scratchReveal"><span class="se">${s.e}</span><span class="st">${s.t}</span></div>`;
+  const c=document.createElement('canvas');c.className='scratchCanvas';
+  card.appendChild(c);sWrap.appendChild(card);
+  let inited=false,cleared=0,total=1;
+  function initScratch(){
+    const r=card.getBoundingClientRect();
+    if(!r.width)return;
+    c.width=r.width;c.height=r.height;total=r.width*r.height;
+    const g=c.getContext('2d');
+    const grad=g.createLinearGradient(0,0,r.width,r.height);
+    grad.addColorStop(0,'#F26A96');grad.addColorStop(1,'#D94F7E');
+    g.fillStyle=grad;g.fillRect(0,0,r.width,r.height);
+    g.fillStyle='rgba(255,255,255,.85)';g.font='700 15px Tajawal,sans-serif';g.textAlign='center';
+    g.fillText('حكّي هون 🪙',r.width/2,r.height/2-8);
+    g.font='24px serif';g.fillText('✨',r.width/2,r.height/2+24);
+    g.globalCompositeOperation='destination-out';
+    inited=true;
+  }
+  new ResizeObserver(initScratch).observe(card);
+  let drawing=false;
+  function scratchAt(e){
+    if(!inited)return;
+    const r=c.getBoundingClientRect();
+    const pt=e.touches?e.touches[0]:e;
+    const x=pt.clientX-r.left,y=pt.clientY-r.top;
+    const g=c.getContext('2d');
+    g.beginPath();g.arc(x,y,20,0,7);g.fill();
+    cleared+=1;
+    if(cleared>28)checkCleared();
+  }
+  function checkCleared(){
+    cleared=0;
+    const g=c.getContext('2d');
+    const d=g.getImageData(0,0,c.width,c.height).data;
+    let empty=0;
+    for(let i=3;i<d.length;i+=64)if(d[i]===0)empty++;
+    if(empty/(d.length/64)>.55)markScratchDone(idx,card);
+  }
+  c.addEventListener('mousedown',e=>{drawing=true;scratchAt(e)});
+  addEventListener('mouseup',()=>drawing=false);
+  c.addEventListener('mousemove',e=>{if(drawing)scratchAt(e)});
+  c.addEventListener('touchstart',e=>{e.preventDefault();scratchAt(e)},{passive:false});
+  c.addEventListener('touchmove',e=>{e.preventDefault();scratchAt(e)},{passive:false});
+});
+
+/* ═════════════ WHEEL (عجلة الحظ) ═════════════ */
+const wCanvas=document.getElementById('wheelCanvas');
+let wheelSpun=false,wheelAngle=0;
+const wheelColors=['#F26A96','#FFD1DF','#D94F7E','#FFC3D6','#B03A63','#FFB3C9'];
+function drawWheel(){
+  const g=wCanvas.getContext('2d');
+  const R=300,cxn=300,cyn=300,n=wheelPrizes.length,arc=2*Math.PI/n;
+  g.clearRect(0,0,600,600);
+  for(let i=0;i<n;i++){
+    const a0=i*arc-Math.PI/2;
+    g.beginPath();g.moveTo(cxn,cyn);g.arc(cxn,cyn,R-6,a0,a0+arc);g.closePath();
+    g.fillStyle=wheelColors[i%wheelColors.length];g.fill();
+    g.strokeStyle='#fff';g.lineWidth=4;g.stroke();
+    g.save();g.translate(cxn,cyn);g.rotate(a0+arc/2);
+    g.textAlign='center';g.font='44px serif';
+    g.fillText(wheelPrizes[i].e,R*.62,16);
+    g.restore();
+  }
+  g.beginPath();g.arc(cxn,cyn,54,0,7);g.fillStyle='#fff';g.fill();
+  g.font='40px serif';g.textAlign='center';g.fillText('💗',cxn,cyn+14);
+}
+function initWheel(){
+  drawWheel();
+  if(S.wheelPrize>=0){
+    wheelSpun=true;
+    const p=wheelPrizes[S.wheelPrize];
+    document.getElementById('wheelResult').textContent='ربحتي: '+p.e+' '+p.t+' 🎉';
+    document.getElementById('spinBtn').style.display='none';
+    showBtn('toStars');
+  }
+}
+function spinWheel(){
+  if(wheelSpun)return;
+  wheelSpun=true;
+  document.getElementById('spinBtn').disabled=true;
+  const n=wheelPrizes.length,arcDeg=360/n;
+  const winner=Math.floor(Math.random()*n);
+  /* الشرائح مرسومة من فوق باتجاه عقارب الساعة، منلف مشان الرابحة توقف تحت المؤشر */
+  const target=360*6-(winner*arcDeg+arcDeg/2)+ (Math.random()*arcDeg*.5-arcDeg*.25);
+  wheelAngle+=target;
+  wCanvas.style.transform='rotate('+wheelAngle+'deg)';
+  sfx('flip');
+  setTimeout(()=>{
+    S.wheelPrize=winner;save();
+    const p=wheelPrizes[winner];
+    sfx('win');burst(110);
+    document.getElementById('wheelResult').textContent='مبرووووك! ربحتي: '+p.e+' '+p.t+' 🎉';
+    document.getElementById('spinBtn').style.display='none';
+    showBtn('toStars');
+  },4400);
+}
+
 /* ═════════════ RESTORE + CONTINUE ═════════════ */
 function restoreProgress(){
   /* envelopes */
@@ -1011,13 +1265,28 @@ function restoreProgress(){
   /* wish + reply */
   if(S.wish)document.getElementById('wishInput').value=S.wish;
   if(S.reply)document.getElementById('replyInput').value=S.reply;
+  /* quiz */
+  if(S.quizDone){
+    qIdx=quizQs.length;qScore=S.quizScore||0;
+    document.getElementById('qNum').textContent='خلصتيه من قبل 🏆';
+    document.getElementById('qText').textContent='نتيجتك: '+qScore+' من '+quizQs.length;
+    document.getElementById('qOpts').innerHTML='';
+    document.getElementById('qScore').textContent='';
+    showBtn('toTimeline');
+  }
+  /* scratch */
+  const sCards=sWrap.querySelectorAll('.scratchCard');
+  S.scratched.forEach(i=>{if(sCards[i]&&!sCards[i].classList.contains('done')){sCards[i].classList.add('done');scratchDoneCount++}});
+  if(scratchDoneCount>=scratchSecrets.length)showBtn('toOpenWhen2');
   /* unlock nav up to furthest reached */
   if(S.furthest>1)showBtn('heroNext');
   if(S.furthest>3)showBtn('toGame2');
   if(S.furthest>4)showBtn('toQuestion');
-  if(S.furthest>5)showBtn('toQuestion2');
-  if(S.furthest>8)showBtn('toOpenWhen');
-  if(S.furthest>9)showBtn('toSurprise2');
+  if(S.furthest>5)showBtn('toTimeline');
+  if(S.furthest>6)showBtn('toQuestion2');
+  if(S.furthest>9)showBtn('toOpenWhen');
+  if(S.furthest>10)showBtn('toOpenWhen2');
+  if(S.furthest>11)showBtn('toSurprise2');
 }
 (function setupContinue(){
   if(S.furthest>1){
@@ -1031,6 +1300,7 @@ function restoreProgress(){
       if(t==='hero')typeIntro();
       if(t==='game1')initG1();
       if(t==='timeline')initTimeline();
+      if(t==='wheel')initWheel();
       if(t==='stars')initStars();
     };
   }
