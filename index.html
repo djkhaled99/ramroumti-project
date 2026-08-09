@@ -241,6 +241,33 @@ button{font-family:inherit}
 .tl-title{color:var(--deep);font-weight:800;font-size:17px;margin:2px 0 5px}
 .tl-body{color:var(--text);font-size:14.5px;line-height:1.9}
 
+/* ═══ day counter ═══ */
+.dayBox{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:20px 0 6px}
+.dayCell{background:#fff;border:2px solid var(--bg2);border-radius:16px;padding:11px 15px;min-width:74px;box-shadow:0 5px 14px rgba(217,79,126,.1)}
+.dayCell b{display:block;font-family:'Marhey','Tajawal',sans-serif;font-size:25px;color:var(--deep);font-variant-numeric:tabular-nums;line-height:1.25}
+.dayCell span{font-size:12px;color:var(--soft);font-weight:800}
+.dayNote{color:var(--soft);font-size:14px;line-height:1.9;margin-top:2px;max-width:400px}
+
+/* ═══ tap hearts ═══ */
+.tapHeart{position:fixed;z-index:85;pointer-events:none;font-size:22px;animation:tapUp .9s ease-out forwards;will-change:transform,opacity}
+@keyframes tapUp{
+  from{transform:translate(-50%,-50%) scale(.5) rotate(var(--tr,0deg));opacity:.95}
+  to{transform:translate(-50%,-160%) scale(1.45) rotate(var(--tr,0deg));opacity:0}
+}
+
+/* ═══ PHOTOS ═══ */
+.photoGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;width:100%;max-width:620px;margin-top:18px}
+.polaroid{background:#fff;padding:11px 11px 34px;border-radius:6px;box-shadow:0 8px 22px rgba(217,79,126,.22);cursor:pointer;border:none;transition:transform .25s;position:relative}
+.polaroid:nth-child(odd){transform:rotate(-2.2deg)}
+.polaroid:nth-child(even){transform:rotate(1.8deg)}
+.polaroid:hover{transform:rotate(0) scale(1.05);z-index:2}
+.polaroid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;display:block;background:var(--bg2)}
+.polaroid figcaption{position:absolute;bottom:9px;left:0;right:0;font-family:'Marhey','Tajawal',sans-serif;font-size:13.5px;color:var(--deep)}
+#photoView{position:fixed;inset:0;z-index:90;background:rgba(90,30,55,.86);display:none;align-items:center;justify-content:center;padding:20px;flex-direction:column;gap:14px}
+#photoView.open{display:flex;animation:stageIn .3s ease both}
+#photoView img{max-width:94vw;max-height:76vh;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.45);border:5px solid #fff}
+#photoView .pcap{color:#fff;font-family:'Marhey','Tajawal',sans-serif;font-size:18px;text-align:center}
+
 /* ═══ REASONS ═══ */
 .reasonBox{background:var(--card);border:2px solid var(--bg2);border-radius:26px;box-shadow:var(--shadow);max-width:460px;width:92vw;padding:34px 24px;margin-top:16px;min-height:150px;display:grid;place-items:center}
 #reasonText{font-size:20px;line-height:1.85;color:var(--deep);font-weight:700;font-family:'Marhey','Tajawal',sans-serif}
@@ -391,7 +418,7 @@ button{font-family:inherit}
     <div class="qOpts" id="qOpts"></div>
     <div class="qScore" id="qScore"></div>
   </div>
-  <button class="btn nextHidden" id="toTimeline" onclick="go('timeline');initTimeline()">هلق قصتنا... 🗓️</button>
+  <button class="btn nextHidden" id="toTimeline" onclick="go('timeline');initTimeline();startDays()">هلق قصتنا... 🗓️</button>
 </section>
 
 <!-- ═════════ 4.5 TIMELINE ═════════ -->
@@ -401,7 +428,19 @@ button{font-family:inherit}
     <p>خمس سنين بلحظات صغيرة صنعت كل شي 💗</p>
   </div>
   <div class="timeline" id="tlWrap"><div class="tl-line"></div></div>
-  <button class="btn nextHidden" id="toQuestion2" onclick="go('question')">طيب... بدي إسألك شي 🥺</button>
+  <div class="dayBox" id="dayBox"></div>
+  <p class="dayNote" id="dayNote"></p>
+  <button class="btn nextHidden" id="toQuestion2" onclick="afterTimeline()">طيب... بدي إسألك شي 🥺</button>
+</section>
+
+<!-- ═════════ 6.6 PHOTOS (بتظهر بس إذا في صور) ═════════ -->
+<section class="stage" id="photos">
+  <div class="secHead">
+    <h2>لحظاتنا 📸</h2>
+    <p>كل صورة إلها حكاية... اكبسي عليها لتكبر 💗</p>
+  </div>
+  <div class="photoGrid" id="photoGrid"></div>
+  <button class="btn" id="toOpenWhenP" style="margin-top:26px" onclick="go('openwhen')">في كمان إلك... ✉️</button>
 </section>
 
 <!-- ═════════ 5 QUESTION ═════════ -->
@@ -447,7 +486,7 @@ button{font-family:inherit}
     <p>حكّي بإصبعك (أو الماوس) عالبطاقات... تحت كل وحدة سر 🤫</p>
   </div>
   <div class="scratchWrap" id="scratchWrap"></div>
-  <button class="btn nextHidden" id="toOpenWhen2" onclick="go('openwhen')">لسا في رسائل... ✉️</button>
+  <button class="btn nextHidden" id="toOpenWhen2" onclick="afterScratch()">لسا في كمان... 💗</button>
 </section>
 
 <!-- ═════════ 6.7 OPEN-WHEN ═════════ -->
@@ -516,6 +555,11 @@ button{font-family:inherit}
 
 <canvas id="confetti"></canvas>
 
+<div id="photoView" onclick="closePhoto()">
+  <img id="pvImg" alt="">
+  <div class="pcap" id="pvCap"></div>
+</div>
+
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeCard()">
   <div class="card" role="dialog" aria-modal="true">
     <span class="icon" id="cIcon"></span>
@@ -555,6 +599,21 @@ const story=[
  {y:'صرتي بكل تفصيل',i:'🍝',t:'باستا و عمرو دياب',b:'كل أكلة وكل أغنية صارت تحكي عنك. الدنيا كلها صارت تشبهك يا رمرومة.'},
  {y:'اليوم',i:'💗',t:'٥ سنين... وكمّان',b:'مهما صار وخربطنا، بعرف شغلة وحدة أكيدة: ما بدي لهالحكاية تخلص أبداً.'},
 ];
+
+/* ═══ 📸 الصور ═══
+   حط صورك بمجلد photos/ بأسماء: 1.jpg, 2.jpg, 3.jpg ...
+   الصفحة بتلاقيهن لحالها. إذا ما في ولا صورة، القسم بينخبى تلقائياً.
+   الكلام تحت هو تعليق كل صورة بالترتيب (فيك تعدّلو أو تزيد عليه) */
+const photoCaps=[
+ 'أول صورة إلنا 🥹','ضحكتك يلي بتجنن 😍','يومنا الحلو 💗','أحلى لحظة 🌸',
+ 'ما بمل من هالصورة 🙈','إنتي وبس 💘','هي الوجه يلي بحبو 🥰','ذكرى ما بتنسى ✨',
+ 'قلبي كلو إلك 💗','عمري 🌙','رمرومتي 🎀','وبعدها القصة كملت... 💞'
+];
+const PHOTO_MAX=12;             /* أكتر عدد صور بيدوّر عليه */
+const PHOTO_EXT=['jpg','jpeg','png','webp'];
+
+/* ═══ ⏱️ تاريخ أول "بحبك" بصوتي (سنة, شهر-1, يوم, ساعة, دقيقة) ═══ */
+const LOVE_DATE=new Date(2024,11,31,23,59);
 
 /* ═══ أسباب بحبك ═══ */
 const loveReasons=[
@@ -738,8 +797,8 @@ for(let i=0;i<16;i++){
 }
 
 /* ═════════════ STAGE ROUTER ═════════════ */
-const order=['lock','hero','game1','letters','game2','quiz','timeline','question','finale','reasons','scratch','openwhen','surprise','wheel','stars'];
-const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',quiz:'🧠 الاختبار',timeline:'🗓️ قصتنا',question:'🥺 السؤال',finale:'💗 الرسالة',reasons:'💝 أسباب بحبك',scratch:'🎟️ المحكوك',openwhen:'✉️ افتحيها لما',surprise:'🎁 المفاجآت',wheel:'🎡 عجلة الحظ',stars:'🌟 أمنية'};
+const order=['lock','hero','game1','letters','game2','quiz','timeline','question','finale','reasons','scratch','photos','openwhen','surprise','wheel','stars'];
+const labels={lock:'🔒',hero:'🧸 البداية',game1:'🕹️ لعبة القلوب',letters:'💌 الرسائل',game2:'🃏 الذاكرة',quiz:'🧠 الاختبار',timeline:'🗓️ قصتنا',question:'🥺 السؤال',finale:'💗 الرسالة',reasons:'💝 أسباب بحبك',scratch:'🎟️ المحكوك',photos:'📸 لحظاتنا',openwhen:'✉️ افتحيها لما',surprise:'🎁 المفاجآت',wheel:'🎡 عجلة الحظ',stars:'🌟 أمنية'};
 function go(id){
   document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1247,6 +1306,87 @@ function spinWheel(){
   },4400);
 }
 
+/* ═════════════ ⏱️ عدّاد الأيام ═════════════ */
+const dayBox=document.getElementById('dayBox');
+function tickDays(){
+  let ms=Date.now()-LOVE_DATE.getTime();
+  if(ms<0)ms=0;
+  const d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60,s=Math.floor(ms/1e3)%60;
+  const cells=[[d,'يوم'],[h,'ساعة'],[m,'دقيقة'],[s,'ثانية']];
+  if(dayBox.children.length!==4){
+    dayBox.innerHTML=cells.map(([v,l])=>`<div class="dayCell"><b>0</b><span>${l}</span></div>`).join('');
+  }
+  [...dayBox.children].forEach((el,i)=>{el.querySelector('b').textContent=cells[i][0]});
+  const note=document.getElementById('dayNote');
+  const next=(Math.floor(d/100)+1)*100;
+  note.textContent=`مرق ${d} يوم من أول ما قلتلك "بحبك" بصوتي 💗 وباقي ${next-d} يوم لـ ${next} يوم سوا 🎉`;
+}
+let dayTimer=null;
+function startDays(){tickDays();if(!dayTimer)dayTimer=setInterval(tickDays,1000)}
+
+/* ═════════════ 💗 قلوب مع كل كبسة ═════════════ */
+const tapEmo=['💗','💕','🩷','💞','🌸','🎀'];
+let lastTap=0;
+addEventListener('pointerdown',e=>{
+  if(reduceMotion)return;
+  const now=Date.now();
+  if(now-lastTap<90)return;            /* ما نغرق الصفحة بالقلوب */
+  lastTap=now;
+  const s=document.createElement('span');
+  s.className='tapHeart';
+  s.textContent=tapEmo[Math.floor(Math.random()*tapEmo.length)];
+  s.style.left=e.clientX+'px';s.style.top=e.clientY+'px';
+  s.style.setProperty('--tr',(Math.random()*50-25)+'deg');
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),950);
+},{passive:true});
+
+/* ═════════════ 📸 معرض الصور ═════════════ */
+const photoGrid=document.getElementById('photoGrid');
+let havePhotos=false;
+function probe(src){
+  return new Promise(res=>{
+    const im=new Image();
+    im.onload=()=>res(im.naturalWidth>0);
+    im.onerror=()=>res(false);
+    im.src=src;
+  });
+}
+async function findPhotos(){
+  let misses=0;
+  for(let i=1;i<=PHOTO_MAX;i++){
+    let found='';
+    for(const ext of PHOTO_EXT){
+      const src=`photos/${i}.${ext}`;
+      if(await probe(src)){found=src;break}
+    }
+    if(found){
+      misses=0;
+      const fig=document.createElement('figure');
+      fig.className='polaroid';fig.tabIndex=0;
+      const cap=photoCaps[i-1]||'ذكرى إلنا 💗';
+      fig.innerHTML=`<img src="${found}" alt="${cap}" loading="lazy"><figcaption>${cap}</figcaption>`;
+      fig.onclick=()=>openPhoto(found,cap);
+      fig.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();openPhoto(found,cap)}};
+      photoGrid.appendChild(fig);
+      havePhotos=true;
+    }else if(++misses>=3)break;        /* 3 فجوات متتالية = خلصت الصور */
+  }
+}
+function openPhoto(src,cap){
+  document.getElementById('pvImg').src=src;
+  document.getElementById('pvCap').textContent=cap;
+  document.getElementById('photoView').classList.add('open');
+  sfx('flip');
+}
+function closePhoto(){document.getElementById('photoView').classList.remove('open')}
+findPhotos();
+
+/* بعد الخط الزمني: عدّاد ثم السؤال */
+function afterTimeline(){go('question')}
+/* بعد المحكوك: لو في صور فرجيها ياهن، وإلا كمّل عالرسائل */
+function afterScratch(){go(havePhotos?'photos':'openwhen')}
+
 /* ═════════════ RESTORE + CONTINUE ═════════════ */
 function restoreProgress(){
   /* envelopes */
@@ -1296,10 +1436,11 @@ function restoreProgress(){
     cb.onclick=()=>{
       restoreProgress();
       let t=(S.stage&&S.stage!=='lock')?S.stage:order[Math.min(S.furthest,order.length-1)];
+      if(t==='photos'&&!havePhotos)t='openwhen';   /* ما نوقّفها بقسم فاضي */
       go(t);toggleMusic(true);
       if(t==='hero')typeIntro();
       if(t==='game1')initG1();
-      if(t==='timeline')initTimeline();
+      if(t==='timeline'){initTimeline();startDays()}
       if(t==='wheel')initWheel();
       if(t==='stars')initStars();
     };
